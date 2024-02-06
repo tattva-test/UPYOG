@@ -1291,7 +1291,7 @@ public class MicroserviceUtils {
 		Iterator<Object> it = redisKeys.iterator();
 		while (it.hasNext()) {
 			Object data = it.next();
-			//LOGGER.info("****Keys in redis---->>> " + data);
+			LOGGER.info("****Keys in redis---->>> " + data);
 		}
         LOGGER.info("Logout for authtoken : " + access_token + " and session : " + sessionId);
         Object sessionIdFromRedis = redisTemplate.opsForHash().get("session_token_fetch:" + access_token, "session_id");

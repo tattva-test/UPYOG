@@ -335,11 +335,15 @@ public class CancelVoucherAction extends BaseFormAction {
 
 			final Query editModeQueryThree = persistenceService.getSession()
 					.createQuery(editModeQuery3.concat(filterQry));
-			editModeQueryThree.setParameter("phStatus", Arrays.asList(FinancialConstants.CREATEDVOUCHERSTATUS,
-					FinancialConstants.PREAPPROVEDVOUCHERSTATUS));
-			params.entrySet().forEach(entry -> editModeQueryThree.setParameter(entry.getKey(), entry.getValue()));
+			List<Object> phStatusList = Arrays.asList(FinancialConstants.CREATEDVOUCHERSTATUS,
+					FinancialConstants.PREAPPROVEDVOUCHERSTATUS);
+			
+			editModeQueryThree.setParameter("phStatus",phStatusList.get(0));
+		//	editModeQueryThree.setParameter("phStatus", Arrays.asList(FinancialConstants.CREATEDVOUCHERSTATUS,
+		//			FinancialConstants.PREAPPROVEDVOUCHERSTATUS));
+			params.entrySet().forEach(entry -> editModeQueryThree.setParameter(entry.getKey(), entry.getValue()));			
 
-			final List<Long> vouchersHavingActivePayments = editModeQueryThree.list();
+			final List<Long> vouchersHavingActivePayments = editModeQueryThree.list();			
 
 			// If remittance payment is there and are in cancelled state
 			final StringBuilder uncancelledRemittances = new StringBuilder(

@@ -1207,9 +1207,14 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                         bean.getBillId());
             if (list == null || list.size() == 0) {
                 LOGGER.error("Sub ledger details are missing for this bill id ->" + bean.getBillId());
-                errors.add(new ValidationError("entityType",
-                        "Sub ledger details are missing for this bill number : " + bean.getBillNumber()));
-                throw new ValidationException(errors);
+				
+				
+				  errors.add(new ValidationError("entityType",
+				  "Sub ledger details are missing for this bill number : " +
+				  bean.getBillNumber()));
+				  
+				  throw new ValidationException(errors);
+				 
             } else
                 for (final Object[] obj : list) {
                     entity = getEntity(Integer.valueOf(obj[0].toString()), Long.valueOf(obj[1].toString()));
@@ -1249,8 +1254,11 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                 if (type.equals("Contractor") || type.equals("Supplier")) {
                     if (obj == null) {
                         LOGGER.error("Sub ledger details are missing for this bill id ->" + bean.getBillId());
-                        errors.add(new ValidationError("entityType",
-                                "Sub ledger details are missing for this bill number : " + bean.getBillNumber()));
+						 
+						  errors.add(new ValidationError("entityType",
+						  "Sub ledger details are missing for this bill number : " +
+						  bean.getBillNumber()));
+						 
                         throw new ValidationException(errors);
                     }
                     entity = getEntity(Integer.valueOf(obj[0].toString()), (Serializable) obj[1]);

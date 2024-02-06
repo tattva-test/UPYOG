@@ -826,7 +826,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             if (bankaccount != null) {
                 if (department != null) {
 					StringBuilder query = new StringBuilder(
-							"select ac.serialNo ,fs.finYearRange from  AccountCheques ac,")
+							"select ac.serialNo ,fs.finYearRange from  AccountCheques ac,") //PAnkaj
 									.append("CFinancialYear fs,ChequeDeptMapping cd")
 									.append(" where ac.serialNo = fs.id and  bankAccountId=? ")
 									.append(" and ac.id=cd.accountCheque and cd.allotedTo=? ")
@@ -838,7 +838,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                             chequeSlNoMap.put(s[0], s[1]);
                     }
                 } else if (departmentId != null) {
-                	StringBuilder queryString = new StringBuilder("select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd ")
+                	StringBuilder queryString = new StringBuilder("select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd ") ///Pankaj
                             .append(" where ac.serialNo = fs.id and  bankAccountId=?")
                             .append(" and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where id =? ) ")
                             .append(" order by serialNo desc ");
@@ -1654,7 +1654,20 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             }
             if (department != null) {
                 sql.append(" and  iv.voucherHeaderId.vouchermis.departmentcode=?");
-                params.add(Long.valueOf(department));
+                //params.add(Long.valueOf(department));
+                  params.add(department); ///Pankaj
+                
+				/*
+				 * String inputString = department; if (StringUtils.isNumeric(inputString)) {
+				 * int numericValue = Integer.parseInt(inputString.replaceAll("_","")); Long
+				 * departmentValue = Long.valueOf(numericValue);
+				 * params.add(departmentValue.toString()); // Continue processing with the
+				 * numeric value } else { // Handle the case where the input is not a valid
+				 * number System.out.println("Input is not a valid number"); }
+				 */
+             
+              //  Long departmentValue = Long.valueOf(department); // Convert Long to String  --Pankaj
+               // params.add(departmentValue.toString()); // Add the String to the list
             }
             if (isNotBlank(voucherHeader.getVoucherNumber())) {
                 sql.append(" and  iv.voucherHeaderId.voucherNumber=?");
