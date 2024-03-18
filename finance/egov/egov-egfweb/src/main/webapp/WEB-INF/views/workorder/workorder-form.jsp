@@ -131,7 +131,7 @@
 </div>
 
 <div class="form-group">
-	<label class="col-sm-2 control-label text-right" for="fund"> <spring:message code="workorder.fund" text="Fund"/><span class="mandatory"></span> 
+	<label class="col-sm-2 control-label text-right" for="fund"> <spring:message code="workorder.source of fund" text="Source Of Fund"/><span class="mandatory"></span> 
 	</label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="fund.id" data-first-option="false" id="fund" class="form-control" required="required" >

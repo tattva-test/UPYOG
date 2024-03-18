@@ -119,7 +119,7 @@
 
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right">
-			<spring:message code="lbl.fund" text="Fund"/>
+			<spring:message code="lbl.source of fund" text="Source Of Fund"/>
 		</label>
 		<div class="col-sm-3 add-margin">
 			<form:hidden class="form-control patternvalidation" path="egBillregistermis.fund" id="fundId"  />
