@@ -51,8 +51,15 @@
 	<label class="col-sm-2 control-label text-right" for="orderNumber"> <spring:message code="workorder.number" text="Order No."/><span class="mandatory"></span> 
 	</label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="orderNumber" id="orderNumber" maxlength="50" cssClass="form-control patternvalidation" data-pattern="alphaNumericwithspecialcharForContraWOAndSupplierName" required="required"/>
-		<form:errors path="orderNumber" cssClass="add-margin error-msg" />
+		<c:if test="${!orderNumberGenerationAuto}">
+       <form:input path="orderNumber" id="orderNumber" maxlength="50" cssClass="form-control patternvalidation" data-pattern="alphaNumericwithspecialcharForContraWOAndSupplierName" value="${orderNumberGenerationAuto}" required="required" readonly="true"/>
+       <form:errors path="orderNumber" cssClass="add-margin error-msg" />
+    </c:if>
+    <c:if test="${orderNumberGenerationAuto}">
+       <form:input path="orderNumber" id="orderNumber" maxlength="50" cssClass="form-control patternvalidation" data-pattern="alphaNumericwithspecialcharForContraWOAndSupplierName" required="required"/>
+       <form:errors path="orderNumber" cssClass="add-margin error-msg" />
+    </c:if>
+		
 	</div>
 	<label class="col-sm-2 control-label text-right" for="orderDate"> <spring:message code="workorder.date" text="Order Date"/><span class="mandatory"></span>
 	</label>

@@ -140,6 +140,9 @@ public class PurchaseOrderController {
 		model.addAttribute("departments", microserviceUtils.getDepartments());
 		model.addAttribute("suppliers", supplierService.getAllActiveEntities(null));
 		
+		String po = purchaseOrderService.generatePurchaseOrderNumber();
+		model.addAttribute("orderNumberGenerationAuto",po);
+		
 	}
 	
 	@GetMapping(value = "/ajax/getAccountCodeAndName")
@@ -170,6 +173,9 @@ public class PurchaseOrderController {
 			return NEW;
 		}
 		
+		model.addAttribute("orderNumberGenerationAuto",
+		          purchaseOrderService.generatePurchaseOrderNumber());
+		
 		System.out.println("purchaseOrder : "+purchaseOrder);
 		
 		purchaseOrderService.create(purchaseOrder);
@@ -189,6 +195,7 @@ public class PurchaseOrderController {
 		prepareNewForm(model);
 		model.addAttribute(PURCHASE_ORDER, purchaseOrder);
 		model.addAttribute("purchaseItems",purchaseItems);
+		model.addAttribute("orderNumberGenerationAuto", true);
 		return EDIT;
 	}
 
@@ -199,6 +206,7 @@ public class PurchaseOrderController {
 			prepareNewForm(model);
 			return EDIT;
 		}
+		model.addAttribute("orderNumberGenerationAuto", true);
 		purchaseOrderService.update(purchaseOrder);
 		redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.purchaseOrder.success", null, null));
 		return "redirect:/purchaseorder/result/" + purchaseOrder.getId() + "/view";
