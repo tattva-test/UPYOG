@@ -51,6 +51,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.time.LocalDate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -169,9 +172,12 @@ public class PurchaseOrderService implements EntityTypeService {
 		  { 
 			  PurchaseItems	  purchaseItems = new PurchaseItems();
 		  purchaseItems.setItemCode(purchaseOrder.getPurchaseItems().get(i).getItemCode());
-		  purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
+		  
 		  purchaseItems.setUnit(purchaseOrder.getPurchaseItems().get(i).getUnit());
 		  purchaseItems.setUnitRate(purchaseOrder.getPurchaseItems().get(i).getUnitRate());
+		  purchaseItems.setGstRate(purchaseOrder.getPurchaseItems().get(i).getGstRate());
+		  purchaseItems.setUnitValueWithGst(purchaseOrder.getPurchaseItems().get(i).getUnitValueWithGst());
+		  purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
 		  purchaseItems.setAmount(purchaseOrder.getPurchaseItems().get(i).getAmount());
 		  purchaseItems.setCreatedBy(purchaseOrder.getCreatedBy());
 		  purchaseItems.setLastModifiedBy(purchaseOrder.getLastModifiedBy());
@@ -248,9 +254,12 @@ public class PurchaseOrderService implements EntityTypeService {
 			  { 
 				  PurchaseItems	  purchaseItems = new PurchaseItems();
 			  purchaseItems.setItemCode(purchaseOrder.getPurchaseItems().get(i).getItemCode());
-			  purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
+			 // purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
 			  purchaseItems.setUnit(purchaseOrder.getPurchaseItems().get(i).getUnit());
 			  purchaseItems.setUnitRate(purchaseOrder.getPurchaseItems().get(i).getUnitRate());
+			  purchaseItems.setGstRate(purchaseOrder.getPurchaseItems().get(i).getGstRate());
+			  purchaseItems.setUnitValueWithGst(purchaseOrder.getPurchaseItems().get(i).getUnitValueWithGst());
+			  purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
 			  purchaseItems.setAmount(purchaseOrder.getPurchaseItems().get(i).getAmount());
 			  purchaseItems.setCreatedBy(purchaseOrder.getCreatedBy());
 			  purchaseItems.setLastModifiedBy(purchaseOrder.getLastModifiedBy());
@@ -357,6 +366,53 @@ public class PurchaseOrderService implements EntityTypeService {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
+	 public synchronized String generatePurchaseOrderNumber() {
+	        
+	        
+	        String financialYear = getFfinancialYear();
+	        
+	        Long latestOrderNumber = getLastPurchaseOrderNumber();
+	        
+	       if (latestOrderNumber != null) {           
+
+	        String orderNumber = "PO/001/" + financialYear + "/" + "0000" +(latestOrderNumber+1); 
+	        
+	        return orderNumber;
+	        
+	        
+	       
+	       }
+	       else {
+	           return "PO/001/" + financialYear + "/" + "00001";
+	      }
+	    }
+
+	   
+	      //added by Navajit
+	        private static String getFfinancialYear() {
+	            LocalDate today = LocalDate.now();
+	            int year = today.getYear();
+	            int month = today.getMonthValue();
+
+	            String financialYear;
+	            if (month >= 4) {
+	                // Financial year starts from April
+	                financialYear = String.format("%02d", year % 100) + "-" + String.format("%02d", (year + 1) % 100);
+	            } else {
+	                financialYear = String.format("%02d", (year - 1) % 100) + "-" + String.format("%02d", year % 100);
+	            }
+	            return financialYear;
+	        }
+	     
+	    
+	    //added by Navajit
+	    
+	      public Long getLastPurchaseOrderNumber() { 
+	          return purchaseOrderRepository.findMaxId(); 
+	          }
 
 	
 }
+

@@ -74,5 +74,8 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Lo
     public PurchaseOrder findByOrderNumber(String orderNumber);
 
 	public PurchaseItems save(PurchaseItems ac);
+	
+	@Query("SELECT MAX(po.id) FROM PurchaseOrder po")
+    Long findMaxId();
 
 }

@@ -45,17 +45,21 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   --%>
-
-<script>
-    document.getElementById("orderValue").readOnly = true;
-</script>
+  
   
 <div class="form-group">
 	<label class="col-sm-2 control-label text-right" for="orderNumber"> <spring:message code="purchaseorder.number" text="Order No"/><span class="mandatory"></span> 
 	</label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="orderNumber" id="orderNumber" maxlength="50" cssClass="form-control patternvalidation" data-pattern="alphaNumericwithspecialcharForContraWOAndSupplierName" required="required"/>
-		<form:errors path="orderNumber" cssClass="add-margin error-msg" />
+		<c:if test="${!orderNumberGenerationAuto}">
+       <form:input path="orderNumber" id="orderNumber" maxlength="50" cssClass="form-control patternvalidation" data-pattern="alphaNumericwithspecialcharForContraWOAndSupplierName" value="${orderNumberGenerationAuto}" required="required" readonly="true"/>
+       <form:errors path="orderNumber" cssClass="add-margin error-msg" />
+    </c:if>
+    <c:if test="${orderNumberGenerationAuto}">
+       <form:input path="orderNumber" id="orderNumber" maxlength="50" cssClass="form-control patternvalidation" data-pattern="alphaNumericwithspecialcharForContraWOAndSupplierName" required="required"/>
+       <form:errors path="orderNumber" cssClass="add-margin error-msg" />
+    </c:if>
+		
 	</div>
 	<label class="col-sm-2 control-label text-right" for="orderDate"> <spring:message code="purchaseorder.date" text="Order Date"/><span class="mandatory"></span>
 	</label>
@@ -115,10 +119,7 @@
 	<label class="col-sm-2 control-label text-right" for="orderValue"> <spring:message code="purchaseorder.ordervalue" text="Total/Order Value"/><span class="mandatory"></span> 
 	</label>
 	<div class="col-sm-3 add-margin">
-		<form:hidden path="" name="netPayableAmount" id="netPayableAmount" value="${netPayableAmount}"/>
-		<form:input path="orderValue" id="orderValue" cssClass="form-control patternvalidation" data-pattern="decimalvalue" onkeydown="return false;"/>
-		<%-- <span id="supplierNetPayableAmount">${supplierNetPayableAmount}</span>   value="${supplierNetPayableAmount}"  --%>
-            
+		<form:input path="orderValue" id="orderValue" cssClass="form-control patternvalidation" data-pattern="decimalvalue" required="required" />
 		<form:errors path="orderValue" cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right" for="advancePayable"> <spring:message code="purchaseorder.advancepayable" text="Advance Payable"/>
@@ -130,7 +131,7 @@
 </div>
 
 <div class="form-group">
-	<label class="col-sm-2 control-label text-right" for="fund"> <spring:message code="purchaseorder.fund" text="Fund"/><span class="mandatory"></span> 
+	<label class="col-sm-2 control-label text-right" for="fund"> <spring:message code="purchaseorder.source of fund" text="Source Of Fund"/><span class="mandatory"></span> 
 	</label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="fund.id" data-first-option="false" id="fund" class="form-control" required="required" >
