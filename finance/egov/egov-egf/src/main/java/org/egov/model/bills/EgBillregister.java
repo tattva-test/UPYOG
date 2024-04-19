@@ -142,6 +142,9 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     @Transient
     private List<EgBilldetails> creditDetails = new ArrayList<>();
     @Transient
+    private List<EgBilldetails> percentDetails = new ArrayList<>();    // added by nava
+    
+    @Transient
     private List<EgBilldetails> netPayableDetails = new ArrayList<>();
     @Transient
     private List<EgBillPayeedetails> billPayeedetails = new ArrayList<>();
@@ -475,7 +478,15 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
         this.creditDetails = creditDetails;
     }
 
-    public List<EgBilldetails> getNetPayableDetails() {
+    public List<EgBilldetails> getPercentDetails() {
+		return percentDetails;
+	}
+
+	public void setPercentDetails(List<EgBilldetails> percentDetails) {
+		this.percentDetails = percentDetails;
+	}
+
+	public List<EgBilldetails> getNetPayableDetails() {
         return netPayableDetails;
     }
 
@@ -528,4 +539,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     public enum BillStatus {
         CREATED, APPROVED, REJECTED, CANCELLED
     }
+    
+
 }
+

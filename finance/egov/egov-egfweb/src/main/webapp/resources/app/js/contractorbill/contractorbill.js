@@ -456,8 +456,23 @@ function calcualteNetpaybleAmount(){
 			}
 		}
 	}
-
+	
 	for (var count = 0; count <=creditAmoutrowcount; ++count) {
+
+		if (null != document.getElementById("creditDetails[" + count
+				+ "].creditamount")) {
+			var val1 = document.getElementById("percentDetails[" + count
+					+ "].percent").value;
+			var val = (Number(debitamt)*Number(val1)/100);		
+			if (val != "" && !isNaN(val)) {
+//				creditamt = creditamt + parseFloat(val);
+				creditamt = parseFloat(Number(creditamt) + Number(val)).toFixed(2);
+				document.getElementById("creditDetails[" + count + "].creditamount").value = Number(val).toFixed(2);
+			}
+		}
+	}
+
+/*	for (var count = 0; count <=creditAmoutrowcount; ++count) {
 
 		if (null != document.getElementById("creditDetails[" + count
 				+ "].creditamount")) {
@@ -469,7 +484,7 @@ function calcualteNetpaybleAmount(){
 				document.getElementById("creditDetails[" + count + "].creditamount").value = Number(val).toFixed(2);
 			}
 		}
-	}
+	}  */
 	netPayableAmount=amountConverter(debitamt-creditamt);
 	$("#contractor-netPayableAmount").val(netPayableAmount);
 	$("#contractorNetPayableAmount").html(netPayableAmount);
