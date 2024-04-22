@@ -82,7 +82,7 @@
                           <form:input path="percentDetails[0].percent" id="percentDetails[0].percent" class="form-control table-input text-right percent" onkeyup="decimalvalue(this);" onblur="calcualteNetpaybleAmount();" data-idx="0" data-optional="0" data-pattern="decimalvalue" maxlength="5" />
                        </td>
 						<td>
-							<form:input path="creditDetails[0].creditamount" id="creditDetails[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" onblur="calcualteNetpaybleAmount();" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount"   maxlength="12" readonly="true" />
+							<form:input path="creditDetails[0].creditamount" id="creditDetails[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" onblur="calcualteNetpaybleAmount();" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount"   maxlength="12" />
 						</td> 
 						<td class="text-center"><span style="cursor:pointer;" onclick="addCreditDetailsRow();"><i class="fa fa-plus"></i></span>
 						 <span class="add-padding credit-delete-row" onclick="deleteCreditDetailsRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
@@ -102,7 +102,7 @@
                                     <form:input path="percentDetails[${item.index }].percent" id="percentDetails[${item.index }].percent" class="form-control table-input text-right percent" onkeyup="decimalvalue(this);" onblur="calcualteNetpaybleAmount();" data-idx="0" data-optional="0" data-pattern="decimalvalue" maxlength="5" />
                                </td>							
 								<td>
-									<form:input path="creditDetails[${item.index }].creditamount" id="creditDetails[${item.index }].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" onblur="calcualteNetpaybleAmount();" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount"   maxlength="12"  value="${billDeatils.creditamount }" readonly="true" />
+									<form:input path="creditDetails[${item.index }].creditamount" id="creditDetails[${item.index }].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" onblur="calcualteNetpaybleAmount();" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount"   maxlength="12"  value="${billDeatils.creditamount }" />
 								</td> 
 								<td class="text-center"><span style="cursor:pointer;" onclick="addCreditDetailsRow();"><i class="fa fa-plus"></i></span>
 								 <span class="add-padding credit-delete-row" onclick="deleteCreditDetailsRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
