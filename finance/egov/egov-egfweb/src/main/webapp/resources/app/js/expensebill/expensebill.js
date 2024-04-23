@@ -1029,7 +1029,7 @@ function calcualteNetpaybleAmount(){
 			}
 		}
 	}
-	for (var count = 0; count <=creditAmoutrowcount; ++count) {
+/*	for (var count = 0; count <=creditAmoutrowcount; ++count) {
 
 		if (null != document.getElementById("tempCreditDetails[" + count
 				+ "].creditamount")) {
@@ -1042,9 +1042,9 @@ function calcualteNetpaybleAmount(){
 				document.getElementById("tempCreditDetails[" + count + "].creditamount").value = Number(val).toFixed(2);
 			}
 		}
-	}
+	}   */
 
-/*	for (var count = 0; count <=creditAmoutrowcount; ++count) {
+	for (var count = 0; count <=creditAmoutrowcount; ++count) {
 
 		if (null != document.getElementById("tempCreditDetails[" + count
 				+ "].creditamount")) {
@@ -1054,7 +1054,7 @@ function calcualteNetpaybleAmount(){
 				creditamt = parseFloat(Number(creditamt) + Number(val)).toFixed(2);
 			}
 		}
-	}  */
+	}  
 	netPayableAmount=amountConverter(debitamt-creditamt);
 	$("#expense-netPayableAmount").val(netPayableAmount);
 	$("#expenseNetPayableAmount").html(netPayableAmount);
