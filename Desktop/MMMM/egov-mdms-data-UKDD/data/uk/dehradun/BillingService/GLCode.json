@@ -1,0 +1,16 @@
+{
+    "tenantId": "pg.dehradun",
+    "moduleName": "BillingService",
+    "GLCode": [
+        {
+            "code": "BIRTH_CERT",
+            "glcode": null,
+            "cb": "pg.dehradun"
+        },
+        {
+            "code": "DEATH_CERT",
+            "glcode": null,
+            "cb": "pg.dehradun"
+        }
+    ]
+}

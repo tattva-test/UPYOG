@@ -1,0 +1,9 @@
+{
+    "tenantId": "pg.dehradun",
+    "moduleName": "FSM",
+    "zeroPricing": [
+        {
+            "zeroPricingStatus": true
+        }
+    ]
+}

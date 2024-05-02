@@ -1,0 +1,9 @@
+{
+    "tenantId": "pg.doiwala",
+    "moduleName": "FSM",
+    "zeroPricing": [
+        {
+            "zeroPricingStatus": true
+        }
+    ]
+}

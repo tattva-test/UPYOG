@@ -1,0 +1,118 @@
+{
+    "tenantId": "mh",
+    "moduleName": "PetService",
+    "Documents": [
+      {
+        "code": "OWNER.IDENTITYPROOF",
+        "documentType": "OWNER",
+        "required": true,
+        "active": true,
+        "digit-citizen":true,
+        "hasDropdown": true,
+        "additionalDetails": {
+          "enabledActions": {
+            "update": {
+              "disableUpload": true,
+              "disableDropdown": true
+            },
+            "create": {
+              "disableUpload": false,
+              "disableDropdown": false
+            }
+          }
+        },
+        "dropdownData": [
+          {
+            "code": "OWNER.IDENTITYPROOF.AADHAAR",
+            "active": true
+          },
+          {
+            "code": "OWNER.IDENTITYPROOF.PAN",
+            "active": true
+          },
+          {
+            "code": "OWNER.IDENTITYPROOF.PASSPORT",
+            "active": true
+          }
+        ],
+        "description": "OWNER.IDENTITYPROOF.IDENTITYPROOF_DESCRIPTION"
+      },
+      {
+        "code": "OWNER.OWNERPHOTO",
+        "documentType": "OWNER.OWNERPHOTO",
+        "required": true,
+        "active": true,
+        "additionalDetails": {
+          "enabledActions": {
+            "update": {
+              "disableUpload": true,
+              "disableDropdown": true
+            },
+            "create": {
+              "disableUpload": false,
+              "disableDropdown": false
+            }
+          }
+        },
+        "dropdownData": [
+            {
+                "code": "OWNER.OWNERPHOTO",
+                "active": true
+            }
+        ],
+        "description": "OWNER.OWNERPHOTO_DESCRIPTION"
+    },
+      {
+        "code": "PET.VACCINATIONCERTIFICATE",
+        "documentType": "PET",
+        "required": true,
+        "active": true,
+        "digit-citizen":true,
+        "hasDropdown": true,
+        "additionalDetails": {
+          "enabledActions": {
+            "update": {
+              "disableUpload": true,
+              "disableDropdown": true
+            },
+            "create": {
+              "disableUpload": false,
+              "disableDropdown": false
+            }
+          }
+        },
+        "dropdownData": [
+          {
+            "code": "PET.VACCINATIONCERTIFICATE.CERTIFICATE",
+            "active": true
+          }
+        ],
+        "description": "PET.VACCINATIONCERTIFICATE.CERTIFICATE_DESCRIPTION"
+      }, 
+    {
+      "code": "PET.PETPHOTO",
+      "documentType": "PET.PETPHOTO",
+      "required": true,
+      "active": true,
+      "additionalDetails": {
+        "enabledActions": {
+          "update": {
+            "disableUpload": true,
+            "disableDropdown": true
+          },
+          "create": {
+            "disableUpload": false,
+            "disableDropdown": false
+          }
+        }
+      },
+      "dropdownData": [
+          {
+              "code": "PET.PETPHOTO",
+              "active": true
+          }
+      ],
+      "description": "PET.PETPHOTO_DESCRIPTION"
+  }
+    ]
+  }

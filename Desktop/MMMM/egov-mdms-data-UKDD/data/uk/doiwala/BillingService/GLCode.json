@@ -1,0 +1,16 @@
+{
+    "tenantId": "pg.doiwala",
+    "moduleName": "BillingService",
+    "GLCode": [
+        {
+            "code": "BIRTH_CERT",
+            "glcode": null,
+            "cb": "pg.doiwala"
+        },
+        {
+            "code": "DEATH_CERT",
+            "glcode": null,
+            "cb": "pg.doiwala"
+        }
+    ]
+}
