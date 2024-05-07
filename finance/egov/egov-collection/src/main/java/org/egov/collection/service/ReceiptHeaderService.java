@@ -1667,7 +1667,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             payment.setInstrumentStatus(instrumentStatus);
             payment.setTransactionDate(transactionDate);
             payment.setTransactionNumber(transactionNumber);
-            payment.setIfscCode(ifscCode);
+            payment.setIfscCode(null);
         } catch (ObjectNotFoundException e) {
             LOGGER.error("ERROR occurred while setting the instruments details",e);
         }
