@@ -1,0 +1,72 @@
+.timeline-box {
+  @apply flex;
+  margin: 0px 8px 15px;
+
+  .timeline-checkpoints {
+    @apply relative flex-1;
+    z-index: 1;
+  }
+
+  .timeline-contents {
+    @apply flex flex-col items-center;
+
+    span {
+      text-align: center;
+      color: blue;
+    }
+
+    .secondary-colors {
+      color: #0b0c0c;
+      padding: 5px;
+      font-size: small;
+    }
+  }
+
+  .line {
+    @apply absolute;
+    top: 10px;
+    left: calc(50% + 14px);
+    right: calc(-50% + 14px);
+    border-top: 10px solid #ffff;
+    z-index: -1;
+  }
+
+  .circles {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    text-align: center;
+    border: 2px solid #f47738;
+  }
+
+  .active {
+    background-color: #f47738;
+  }
+}
+
+.TLComments {
+  max-width: 360px;
+  @apply mb-sm p-sm bg-grey-light;
+
+  h3 {
+    @apply font-bold text-caption-m;
+  }
+
+  p {
+    @apply text-body-l;
+  }
+}
+
+@screen dt {
+  .TLComments {
+    width: 360px;
+
+    h3 {
+      @apply text-caption-m-dt;
+    }
+
+    p {
+      @apply text-body-l-dt;
+    }
+  }
+}

@@ -4,6 +4,11 @@ import {
   initPGRComponents,
   PGRReducers,
 } from "@upyog/digit-ui-module-pgr";
+import {
+  initBMCComponents,
+  BMCReducers,
+} from "@upyog/digit-ui-module-bmc";
+
 import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
 import {
   PTModule,
@@ -69,7 +74,8 @@ const enabledModules = [
   "FireNoc",
   "Birth",
   "Death",
-  "PTR"
+  "PTR",
+  "BMC"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -90,6 +96,7 @@ window.Digit.ComponentRegistryService.setupRegistry({
 });
 
 initPGRComponents();
+initBMCComponents();
 initFSMComponents();
 initDSSComponents();
 initMCollectComponents();

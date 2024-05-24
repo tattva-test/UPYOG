@@ -1,0 +1,110 @@
+{
+  "religions": [
+    {
+      "value": "hindu",
+      "label": "Hindu"
+    },
+    {
+      "value": "muslim",
+      "label": "Muslim"
+    },
+    {
+      "value": "christian",
+      "label": "Christian"
+    },
+    {
+      "value": "sikh",
+      "label": "Sikh"
+    }
+  ],
+  "castes": [
+    {
+      "value": "general",
+      "label": "General"
+    },
+    {
+      "value": "obc",
+      "label": "OBC"
+    },
+    {
+      "value": "sc",
+      "label": "SC"
+    },
+    {
+      "value": "st",
+      "label": "ST"
+    }
+  ],
+  "subCastes": [
+    {
+      "value": "subCaste1",
+      "label": "Sub Caste 1"
+    },
+    {
+      "value": "subCaste2",
+      "label": "Sub Caste 2"
+    },
+    {
+      "value": "subCaste3",
+      "label": "Sub Caste 3"
+    }
+  ],
+  "gender": [
+    {
+      "value": "female",
+      "label": "Female"
+    },
+    {
+      "value": "other",
+      "label": "Other"
+    }
+  ],
+  "radio": [
+    {
+      "value": "Yes",
+      "label": "Yes"
+    },
+    {
+      "value": "No",
+      "label": "No"
+    }
+  ],
+  "rationcardtype": [
+    {
+      "value": "yellow Card",
+      "label": "Yellow Card"
+    },
+    {
+      "value": "orange Card",
+      "label": "Orange Card"
+    }
+  ],
+  "bankName": [
+    {
+      "value": "HDFC",
+      "label": "HDFC"
+    },
+    {
+      "value": "ICICI",
+      "label": "ICICI"
+    },
+    {
+      "value": "SBI",
+      "label": "SBI"
+    }
+  ],
+  "bankBranch": [
+    {
+      "value": "Aminabaad",
+      "label": "Aminabaad"
+    },
+    {
+      "value": "Vadodara",
+      "label": "Vadodara"
+    },
+    {
+      "value": "Surat",
+      "label": "Surat"
+    }
+  ]
+}
