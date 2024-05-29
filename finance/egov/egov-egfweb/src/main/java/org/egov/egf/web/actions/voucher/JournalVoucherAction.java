@@ -179,7 +179,7 @@ public class JournalVoucherAction extends BaseVoucherAction
     	 
     	 for (PropertyTaxDemandRegister pt : ptd) {
     		 if(pt.getFlag()==null) {
-    				List<PropertyTaxDemandRegister> demand = propertyTaxDemandRegisterService.executeNativeQuery( pt); 
+    				List<PropertyTaxDemandRegister> demand = propertyTaxDemandRegisterService.getAlllDatass( pt); 
     				pt.setFlag(1);      
     		        propertyTaxDemandRegisterRepository.save(pt);
     		 }

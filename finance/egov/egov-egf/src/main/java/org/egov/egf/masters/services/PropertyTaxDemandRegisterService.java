@@ -17,10 +17,12 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFiscalPeriod;
 import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
 import org.egov.commons.Vouchermis;
+import org.egov.commons.dao.FiscalPeriodHibernateDAO;
 import org.egov.commons.dao.VoucherHeaderDAO;
 import org.egov.commons.dao.VoucherHeaderHibernateDAO;
 import org.egov.commons.repository.CChartOfAccountsRepository;
@@ -31,6 +33,7 @@ import org.egov.commons.repository.VouchermisRepository;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.masters.model.PropertyTaxDemandRegister;
+import org.egov.egf.masters.model.PropertyTaxReceiptRegister;
 import org.egov.egf.masters.repository.PropertyTaxDemandRegisterRepository;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.StateAware;
@@ -63,7 +66,8 @@ public class PropertyTaxDemandRegisterService implements EntityTypeService{
 	@Autowired
 	private CGeneralLedgerRepository cgeneralLedgerRepository;
 
-	
+	@Autowired
+    private FiscalPeriodHibernateDAO fphd;
 	@Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
@@ -81,20 +85,8 @@ public class PropertyTaxDemandRegisterService implements EntityTypeService{
         return cvoucherHeaderRepository.getDetailsForMaxIdFromVoucherHeader();
     }
     
-    public List<PropertyTaxDemandRegister> executeNativeQuery(PropertyTaxDemandRegister pt) {
-    	final StringBuilder queryStr = new StringBuilder();
-    	 queryStr.append("SELECT DISTINCT pr.id AS pr_id, pr.propertyid AS pr_propertyid, pr.oldpropertyid AS pr_oldpropertyid, " +
-                 "pr.propertytype AS pr_propertytype, pr.usage AS pr_usage, pr.name AS pr_name, " +
-                 " pr.totaltax AS pr_totaltax, " +
-                 "ptmcmwc.id AS ptmcmwc_id, ptmcmwc.glcode as glcode, ptmcmwc.accounthead as accounthead, " +
-                 "ptmcmwc.\"name\" as \"name\", ptmcmwc.propertytype as propertytype, " +
-                 "ptmcmwc.propertytypecode as propertytypecode, ptmcmwc.propertytypeaccounthead as propertytypeaccounthead " +
-                 "FROM citya.property_tax_demand_register pr " +
-                 "JOIN citya.property_tax_module_codes_mapping_with_coa ptmcmwc " +
-                 "ON ptmcmwc.usage = pr.usage") ;
-      SQLQuery query = persistenceService.getSession().createSQLQuery(queryStr.toString());
-      
-      List<PropertyTaxDemandRegister> dm = query.list();  
+    public List<PropertyTaxDemandRegister> getAlllDatass(PropertyTaxDemandRegister pt){
+    	List<PropertyTaxDemandRegister> propertyTaxReceiptRegister = propertyTaxDemandRegisterRepository.findAll();
       
   //    List<PropertyTaxDemandRegister> ptd = propertyTaxDemandRegisterRepository.findAll();
        
@@ -126,6 +118,8 @@ public class PropertyTaxDemandRegisterService implements EntityTypeService{
       calendar.set(Calendar.SECOND, 0);
       calendar.set(Calendar.MILLISECOND, 0);
       Date currentDate = calendar.getTime();
+      CFiscalPeriod cp = fphd.getFiscalPeriodByDate(currentDate);
+      Long fid = cp.getId();
       
       	CVoucherHeader cVoucherHeader = new CVoucherHeader();
       	Fund fund = getFundById(1);
@@ -137,7 +131,7 @@ public class PropertyTaxDemandRegisterService implements EntityTypeService{
       	cVoucherHeader.setVoucherNumber(newVoucherNumber);
       	cVoucherHeader.setVoucherDate(currentDate);
       	cVoucherHeader.setFundId(fund);
-      	cVoucherHeader.setFiscalPeriodId(21);
+      	cVoucherHeader.setFiscalPeriodId(fid.intValue());
       	cVoucherHeader.setStatus(0);
       	cVoucherHeader.setOriginalvcId(null);
       	cVoucherHeader.setIsConfirmed(null);
@@ -173,6 +167,12 @@ public class PropertyTaxDemandRegisterService implements EntityTypeService{
       	
       	voucherHeaderService.save(vouchermis);
       	System.out.println(vouchermis);
+      	
+      	if(pt.getFlag()==null) {
+            Long voucherId = cv.getId(); 
+             pt.setVoucherid(voucherId);
+         propertyTaxDemandRegisterRepository.save(pt);
+      	}
       List<CGeneralLedger> cgeneralLedger = new ArrayList<>();
       CChartOfAccounts coa = getById(1129L);
       CChartOfAccounts coa2 = getById(331L);
@@ -200,7 +200,7 @@ public class PropertyTaxDemandRegisterService implements EntityTypeService{
       
       
       	         
-      return dm;
+      return propertyTaxReceiptRegister;
     }
     
     
@@ -208,11 +208,11 @@ public class PropertyTaxDemandRegisterService implements EntityTypeService{
     	CVoucherHeader maxIdEntity = cvoucherHeaderRepository.getDetailsForMaxIdFromVoucherHeaders();
     	CVoucherHeader cvvv = null; 
         if (maxIdEntity != null) {
-            System.out.println("Maximum ID from citya.voucherheader: " + (maxIdEntity.getId()));
+            System.out.println("Maximum ID from voucherheader: " + (maxIdEntity.getId()));
             cvvv = new CVoucherHeader();
             cvvv.setId(maxIdEntity.getId());
         } else {
-            System.out.println("No details found for maximum ID in citya.voucherheader.");
+            System.out.println("No details found for maximum ID in voucherheader.");
         }
        
         return cvvv;

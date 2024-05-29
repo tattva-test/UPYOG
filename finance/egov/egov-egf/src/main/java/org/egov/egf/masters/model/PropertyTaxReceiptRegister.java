@@ -5,12 +5,15 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 @Entity
 @Table(name = "property_tax_receipt_register")
 public class PropertyTaxReceiptRegister implements Serializable{
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
     private String tenantid;
     private String propertyid;
@@ -34,6 +37,13 @@ public class PropertyTaxReceiptRegister implements Serializable{
     private Date system_createddate;
     private Date createddate;
     private Date updateddate;
+    public Long getVoucherid() {
+		return voucherid;
+	}
+	public void setVoucherid(Long voucherid) {
+		this.voucherid = voucherid;
+	}
+	private Long voucherid;
 	public Integer getId() {
 		return id;
 	}

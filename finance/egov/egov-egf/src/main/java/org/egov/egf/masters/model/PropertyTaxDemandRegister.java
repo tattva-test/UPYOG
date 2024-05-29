@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -13,6 +15,7 @@ import javax.persistence.Table;
 public class PropertyTaxDemandRegister implements Serializable{
 	
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 	@Column(name = "propertyid")
     private String propertyid;
@@ -51,7 +54,13 @@ public class PropertyTaxDemandRegister implements Serializable{
 	@Column(name = "totalcollected")
     private String totalcollected;
 	@Column(name = "voucherid")
-    private String voucherid;
+	private Long voucherid;
+	public Long getVoucherid() {
+		return voucherid;
+	}
+	public void setVoucherid(Long voucherid) {
+		this.voucherid = voucherid;
+	}
 	@Column(name = "flag")
     private Integer flag;
 	@Column(name = "createddate")
@@ -178,12 +187,7 @@ public class PropertyTaxDemandRegister implements Serializable{
 	public void setTotalcollected(String totalcollected) {
 		this.totalcollected = totalcollected;
 	}
-	public String getVoucherid() {
-		return voucherid;
-	}
-	public void setVoucherid(String voucherid) {
-		this.voucherid = voucherid;
-	}
+	
 	public Integer getFlag() {
 		return flag;
 	}

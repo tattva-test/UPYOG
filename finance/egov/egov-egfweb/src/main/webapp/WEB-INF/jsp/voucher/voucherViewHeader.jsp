@@ -200,5 +200,20 @@
 			</c:choose>
 
 		</tr>
+		<tr>
+			<td width="10%" class="<c:out value='${tdclass}' />"><s:text name="voucher.propertyId"/> :
+				&nbsp;</td>
+			<td colspan="3" class="<c:out value='${tdclass}' />"><s:property
+					value="%{getMasterName('propertyId')}" /></td>
+			<c:choose>
+				<c:when test="${tdclass == 'bluebox'}">
+					<c:set var="tdclass" value="greybox" scope="request" />
+				</c:when>
+				<c:otherwise>
+					<c:set var="tdclass" value="bluebox" scope="request" />
+				</c:otherwise>
+			</c:choose>
+
+		</tr>
 	</table>
 </div>
