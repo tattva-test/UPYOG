@@ -95,7 +95,7 @@ public class DemandRegisterReportClient {
 	    	                put("key", "abcdkey");
 	    	                put("msgId", "20170310130900");
 	    	                put("requesterId", "");
-	    	                put("authToken", "54d18525-5802-4339-a930-f7ec54317b9a");
+	    	                put("authToken", "2b9b9769-7c58-4e9d-8085-1d64a9b1506c");
 	    	            }});
 
 	    	            ObjectMapper mapper = new ObjectMapper();
