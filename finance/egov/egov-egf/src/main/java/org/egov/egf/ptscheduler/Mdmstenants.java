@@ -38,7 +38,7 @@ public class Mdmstenants {
 	            put("did", "1");
 	            put("key", "");
 	            put("msgId", "20170310130900|hi_IN");
-	            put("authToken", "54d18525-5802-4339-a930-f7ec54317b9a");
+	            put("authToken", "2b9b9769-7c58-4e9d-8085-1d64a9b1506c");
 	        }});
 	        requestBody.put("MdmsCriteria", new HashMap<String, Object>() {{
 	            put("tenantId", "uk");
