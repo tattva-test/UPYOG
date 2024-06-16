@@ -245,7 +245,6 @@ public class VoucherSearchAction extends BaseFormAction {
 				LOGGER.debug("nonBillPayment");
 		} else if (voucherHeader.getType() != null && !voucherHeader.getType().equals("-1"))
 			getVoucherNameMap(voucherHeader.getType());
-		schedulerService.runTask();
 		return SEARCH;
 
 	}
