@@ -53,27 +53,23 @@ const defaultImage =
 Feature :: Citizen Webview sidebar
 */
 const Profile = ({ info, stateName, t }) => (
-  <div className="profile-section">
-    <div className="imageloader imageloader-loaded">
-      <img className="img-responsive img-circle img-Profile" src={info?.photo ? info?. photo : defaultImage} />
+  <div class="user-info-container">
+    <div class="user-info-image">
+      <img alt="User" class="img-responsive img-circle img-Profile" src={info?.photo ? info?.photo : defaultImage} />
     </div>
-    <div id="profile-name" className="label-container name-Profile">
-      <div className="label-text"> {info?.name} </div>
+    <div class="user-info-details">
+      <div><i class="fa fa-user fa-xs" aria-hidden="true"></i> {info?.name}</div>
+      <div><i class="fa fa-phone fa-xs" aria-hidden="true"></i> {info?.mobileNumber}</div>
+      {info?.emailId && (
+        <div><i class="fa fa-envelope fa-xs" aria-hidden="true"></i> {info.emailId} </div>
+      )}
     </div>
-    <div id="profile-location" className="label-container loc-Profile">
-      <div className="label-text"> {info?.mobileNumber} </div>
-    </div>
-    {info?.emailId && (
-      <div id="profile-emailid" className="label-container loc-Profile">
-        <div className="label-text"> {info.emailId} </div>
-      </div>
-    )}
-    <div className="profile-divider"></div>
     {window.location.href.includes("/employee") &&
       !window.location.href.includes("/employee/user/login") &&
       !window.location.href.includes("employee/user/language-selection") && <ChangeCity t={t} mobileView={true} />}
   </div>
 );
+
 const IconsObject = {
   CommonPTIcon: <PTIcon className="icon" />,
   OBPSIcon: <OBPSIcon className="icon" />,
@@ -124,8 +120,6 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   }
 
   const redirectToLoginPage = () => {
-    // localStorage.clear();
-    // sessionStorage.clear();
     history.push("/digit-ui/citizen/login");
   };
   const showProfilePage = () => {
@@ -135,10 +129,13 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const filteredTenantContact = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
 
   let menuItems = [...SideBarMenu(t, showProfilePage, redirectToLoginPage, isEmployee, storeData, tenantId)];
-
+  console.log(menuItems);
   menuItems = menuItems.filter((item) => item.element !== "LANGUAGE");
 
+
   const MenuItem = ({ item }) => {
+    console.log("from MenuItem");
+    console.log(item);
     const leftIconArray = item?.icon || item.icon?.type?.name;
     const leftIcon = leftIconArray ? IconsObject[leftIconArray] : IconsObject.BillsIcon;
     let itemComponent;
@@ -170,6 +167,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
 
     return <Item />;
   };
+
   let profileItem;
 
   if (isFetched && user && user.access_token) {
@@ -224,32 +222,14 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   return (
     <React.Fragment>
       <div>
-        <div
-          style={{
-            height: "100%",
-            width: "100%",
-            top: "0px",
-            backgroundColor: "rgba(0, 0, 0, 0.54)",
-            pointerzevents: "auto",
-          }}
-        ></div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            height: isMobile ? "calc(100vh - 56px)" : "auto",
-            zIndex: "99",
-          }}
-        >
           {profileItem}
-          <div className="drawer-desktop" style={{"backgroundColor":"white"}}>
+          <div className="drawer-desktop" style={{ "backgroundColor": "aliceblue" }}>
             {menuItems?.map((item, index) => (
               <div className={`sidebar-list ${pathname === item?.link || pathname === item?.sidebarURL ? "active" : ""}`} key={index}>
                 <MenuItem item={item} />
               </div>
             ))}
           </div>
-        </div>
         <div>{showDialog && <LogoutDialog onSelect={handleOnSubmit} onCancel={handleOnCancel} onDismiss={handleOnCancel}></LogoutDialog>}</div>
       </div>
     </React.Fragment>

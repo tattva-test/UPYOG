@@ -8,6 +8,8 @@ import SideBarMenu from "../../../config/sidebar-menu";
 import ChangeCity from "../../ChangeCity";
 import StaticCitizenSideBar from "./StaticCitizenSideBar";
 
+let configEmployeeSideBar = {};
+
 const defaultImage =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAADUCAMAAACs0e/bAAAAM1BMVEXK0eL" +
   "/" +
@@ -30,48 +32,41 @@ const defaultImage =
   "Ue6ilunu8jF8pFwgv1FXp3mUt35OtRbr7eM4u4Gs6vUBXgeuHc5kfE/cbvWZtkROLm1DMtLCy80tzsu2PRj0hTI8fvrQuvsjlJkyutszq+m423wHaLTyniy/XuiGZ84LuT+m5ZfNfRxyGs7L" +
   "XZOvia7VujatUwVTrIt+Q/Csc7Tuhe+BOakT10b4TuoiiJjvgU9emTO42PwEfBa+cuodKkuf42DXr1D3JpXz73Hnn0j10evHKe+nufgfUm+7B84sX9FfdEzXux2DBpWuKokkCqN/5pa/8pmvn" +
   "L+RGKCddCGmatiPyPB/+ekO/M/q/7uvbt22kTt3zEnXPzCV13T3Gel4/6NduDu66xRvlPNkM1RjjxUdv+4WhGx6TftD19Q/dfzpwcHO+rE3fAAAAAElFTkSuQmCC";
-const Profile = ({ info, stateName, t }) => {
-  const [profilePic, setProfilePic] = React.useState(null);
-  React.useEffect(async () => {
-    const tenant = Digit.ULBService.getCurrentTenantId();
-    const uuid = info?.uuid;
-    if (uuid) {
-      const usersResponse = await Digit.UserService.userSearch(tenant, { uuid: [uuid] }, {});
 
-      if (usersResponse && usersResponse.user && usersResponse.user.length) {
-        const userDetails = usersResponse.user[0];
-        const thumbs = userDetails?.photo?.split(",");
-        setProfilePic(thumbs?.at(0));
+  const Profile = ({ info, stateName, t }) => {
+    const [profilePic, setProfilePic] = React.useState(null);
+    
+    React.useEffect(async () => {
+      const tenant = Digit.ULBService.getCurrentTenantId();
+      const uuid = info?.uuid;
+      if (uuid) {
+        const usersResponse = await Digit.UserService.userSearch(tenant, { uuid: [uuid] }, {});
+        if (usersResponse && usersResponse.user && usersResponse.user.length) {
+          const userDetails = usersResponse.user[0];
+          const thumbs = userDetails?.photo?.split(",");
+          setProfilePic(thumbs?.at(0));
+        }
       }
-    }
-  }, [profilePic !== null]);
-  return (
-    <div className="profile-section">
-      <div className="imageloader imageloader-loaded">
-        <img
-          className="img-responsive img-circle img-Profile"
-          src={profilePic ? profilePic : defaultImage}
-          style={{ objectFit: "cover", objectPosition: "center" }}
-        />
+    }, [profilePic !== null]);
+    return (
+      <div class="user-info-container">
+      <div class="user-info-image">
+        <img alt="User" class="img-responsive img-circle img-Profile" src={info?.photo ? info?.photo : defaultImage} />
       </div>
-      <div id="profile-name" className="label-container name-Profile">
-        <div className="label-text"> {info?.name} </div>
+      <div class="user-info-details">
+        <div><i class="fa fa-user fa-xs" aria-hidden="true"></i> {info?.name}</div>
+        <div><i class="fa fa-phone fa-xs" aria-hidden="true"></i> {info?.mobileNumber}</div>
+        {info?.emailId && (
+          <div><i class="fa fa-envelope fa-xs" aria-hidden="true"></i> {info.emailId} </div>
+        )}
       </div>
-      <div id="profile-location" className="label-container loc-Profile">
-        <div className="label-text"> {info?.mobileNumber} </div>
-      </div>
-      {info?.emailId && (
-        <div id="profile-emailid" className="label-container loc-Profile">
-          <div className="label-text"> {info.emailId} </div>
-        </div>
-      )}
-      <div className="profile-divider"></div>
       {window.location.href.includes("/employee") &&
         !window.location.href.includes("/employee/user/login") &&
         !window.location.href.includes("employee/user/language-selection") && <ChangeCity t={t} mobileView={true} />}
     </div>
-  );
+    );
 };
+
 const PoweredBy = () => (
   <div className="digit-footer" style={{ marginBottom: 0 }}>
   </div>
@@ -150,8 +145,6 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
       },
     ];
   }
-
-  let configEmployeeSideBar = {};
 
   if (!isEmployee) {
     if(linkData && linkData.FSM){

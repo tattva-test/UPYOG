@@ -12,7 +12,8 @@ import {
   MCollectIcon, 
   ComplaintIcon,
   BPAHomeIcon,
-  WSICon
+  WSICon,
+  PersonIcon
 } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -42,6 +43,8 @@ const StaticDynamicCard = ({moduleCode}) => {
           return <WSICon className="fill-path-primary-main" styles={styles}/>
         case 'OBPS':
           return <BPAHomeIcon className="fill-path-primary-main" styles={styles}/>
+        case 'BMC':
+            return <PersonIcon className="fill-path-primary-main" styles={styles}/>;
         default:
           return <CaseIcon className="fill-path-primary-main" styles={styles}/>;
       }
