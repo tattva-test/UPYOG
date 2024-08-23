@@ -227,6 +227,25 @@ digiLocker:{
   bills: {
     cancelBill: "/billing-service/bill/v2/_cancelbill",
   },
+  common: {
+    get: "/bmc-service-v1/common/_get",
+    getBanks: "/bmc-service-v1/bank/_get",
+  },
+
+  schemes: {
+    getSchemes: "/bmc-service-v1/scheme/_search",
+    saveScheme: "/bmc-service-v1/application/_save",
+    getVerifierScheme: "http://localhost:8081/bmc/verifier/_getapplications",
+  },
+
+  users: {
+    getUserDetails: "/bmc-service-v1/user/_get",
+    saveUserDetails: "/bmc-service-v1/user/_save",
+  },
+
+  banksDetails: {
+    getBankDetails: "/bmc-service-v1/bank/_getDetails",
+  },
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",
   audit: "/inbox/v1/elastic/_search",

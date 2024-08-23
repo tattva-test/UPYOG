@@ -264,7 +264,14 @@ import useServiceSearchPTR from "./ptr/useServiceSearchPTR";
 import usePetDocumentSearch from "./ptr/usePetDocumentSearch";
 import useMyPetPayments from "./ptr/useMyPetPayments";
 import useTenantsPTR from "./ptr/useTenants";
+import useCommonGet from "./bmc/useCommon";
+import useCommonGetBank from "./bmc/useCommonGetBank";
+import useSaveUserDetail from "./bmc/useSaveUserDetail";
+import useSaveSchemes from './bmc/saveScheme';
+import useVerifierSchemeDetail from './bmc/useVerifierScheme';
 
+import useSchemesGet from "./bmc/getSchemes";
+import useUsersDetails from "./bmc/useUsers";
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
 
@@ -525,6 +532,16 @@ const ws = {
 
 const reports = {
   useReportMeta,
+};
+
+const bmc={
+  useCommonGet,
+  useSchemesGet,
+  useCommonGetBank,
+  useUsersDetails,
+  useSaveUserDetail,
+  useSaveSchemes,
+  useVerifierSchemeDetail
 };
 
 const Hooks = {

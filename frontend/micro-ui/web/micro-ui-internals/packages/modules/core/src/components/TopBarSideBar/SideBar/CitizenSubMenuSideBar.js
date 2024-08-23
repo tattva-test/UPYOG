@@ -48,6 +48,7 @@ const CitizenSubMenuSideBar = ({ item }) => {
             {leftIcon}
             <span>{t(Digit.Utils.locale.getTransformedLocale(`ACTION_TEST_${item.moduleName}`))}</span>
           </div>
+
           <div> {item.links && subnav} </div>
         </div>
       </div>
