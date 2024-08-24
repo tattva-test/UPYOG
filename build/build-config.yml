@@ -32,7 +32,7 @@ config:
         image-name: "billing-service"
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "business-services/billing-service/src/main/resources/db"
-        image-name: "bmc-service-v1"      
+        image-name: "bmc-service-v1-db"      
 
   - name: "builds/upyog/business-services/collection-services"
     build:
