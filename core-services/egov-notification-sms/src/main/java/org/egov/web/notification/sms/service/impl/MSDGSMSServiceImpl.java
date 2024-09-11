@@ -43,7 +43,7 @@ public class MSDGSMSServiceImpl extends BaseSMSService {
         MessageDigest md;
         byte[] md5 = new byte[64];
         try {
-            md = MessageDigest.getInstance("SHA-256");
+            md = MessageDigest.getInstance("SHA-1");
             md.update(text.getBytes("iso-8859-1"), 0, text.length());
             md5 = md.digest();
         } catch (Exception e) {
@@ -86,6 +86,7 @@ public class MSDGSMSServiceImpl extends BaseSMSService {
         final MultiValueMap<String, String> requestBody = bodyBuilder.getSmsRequestBody(sms);
         postProcessor(requestBody);
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(requestBody, getHttpHeaders());
+        log.info("RRRRRRRRRRRRRRRRRRRRRRRRRRRR"+request.toString());
         executeAPI(URI.create(url), HttpMethod.POST, request, String.class);
     }
 
