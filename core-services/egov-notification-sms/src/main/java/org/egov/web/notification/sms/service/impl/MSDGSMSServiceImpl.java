@@ -6,8 +6,7 @@ import org.egov.web.notification.sms.models.Sms;
 import org.egov.web.notification.sms.service.BaseSMSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.net.ssl.HttpsURLConnection;
@@ -16,17 +15,18 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.MessageDigest;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.List;
 
 @Service
 @Slf4j
@@ -35,9 +35,6 @@ public class MSDGSMSServiceImpl extends BaseSMSService {
 
     @Autowired
     private SMSProperties smsProperties;
-
-    @Autowired
-    private SMSBodyBuilder bodyBuilder;
 
     private SSLContext sslContext;
 
@@ -48,40 +45,37 @@ public class MSDGSMSServiceImpl extends BaseSMSService {
         try {
             sslContext = SSLContext.getInstance("TLSv1.2");
             if (smsProperties.isVerifyCertificate()) {
-                log.info("checking certificate");
+                log.info("Checking certificate");
 
-                // Loading the certificate
                 try (InputStream is = getClass().getClassLoader().getResourceAsStream("smsgwsmsgovin.cer")) {
                     CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
                     X509Certificate caCert = (X509Certificate) certFactory.generateCertificate(is);
 
-                    // Creating a KeyStore and loading the certificate
                     KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
                     trustStore.load(null);
                     trustStore.setCertificateEntry("caCert", caCert);
 
-                    // Initializing TrustManagerFactory with the truststore
                     TrustManagerFactory trustFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
                     trustFactory.init(trustStore);
 
                     TrustManager[] trustManagers = trustFactory.getTrustManagers();
                     sslContext.init(null, trustManagers, null);
-                } catch (KeyManagementException | IllegalStateException | Exception e) {
-                    log.error("Not able to load SMS certificate from the specified path {}", e.getMessage());
+                } catch (KeyManagementException | CertificateException | KeyStoreException | IOException e) {
+                    log.error("Unable to load SMS certificate: {}", e.getMessage());
                 }
             } else {
-                log.info("not checking certificate");
+                log.info("Not checking certificate");
                 TrustManager tm = new X509TrustManager() {
                     @Override
-                    public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
                     }
 
                     @Override
-                    public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {
+                    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
                     }
 
                     @Override
-                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    public X509Certificate[] getAcceptedIssuers() {
                         return null;
                     }
                 };
@@ -94,67 +88,76 @@ public class MSDGSMSServiceImpl extends BaseSMSService {
         }
     }
 
-    protected void submitToExternalSmsService(Sms sms) {
-        String finalmessage = "";
-        for (int i = 0; i < sms.getMessage().length(); i++) {
-            char ch = sms.getMessage().charAt(i);
-            int j = (int) ch;
-            String sss = "&#" + j + ";";
-            finalmessage = finalmessage + sss;
-        }
-        sms.setMessage(finalmessage);
-
+    private static String MD5(String text) {
         try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(text.getBytes("iso-8859-1"), 0, text.length());
+            byte[] md5 = md.digest();
+            return convertedToHex(md5);
+        } catch (Exception e) {
+            log.error("Exception while encrypting: ", e);
+            return null;
+        }
+    }
+
+    private static String convertedToHex(byte[] data) {
+        StringBuilder buf = new StringBuilder();
+
+        for (byte b : data) {
+            int halfOfByte = (b >>> 4) & 0x0F;
+            int twoHalfBytes = 0;
+
+            do {
+                if (0 <= halfOfByte && halfOfByte <= 9)
+                    buf.append((char) ('0' + halfOfByte));
+                else
+                    buf.append((char) ('a' + (halfOfByte - 10)));
+
+                halfOfByte = b & 0x0F;
+
+            } while (twoHalfBytes++ < 1);
+        }
+        return buf.toString();
+    }
+
+    @Override
+    protected void submitToExternalSmsService(Sms sms) {
+        try {
+            String finalMessage = encodeMessage(sms.getMessage());
             String url = smsProperties.getUrl();
-            final MultiValueMap<String, String> requestBody = bodyBuilder.getSmsRequestBody(sms);
-            postProcessor(requestBody);
-            HttpsURLConnection conn = (HttpsURLConnection) new URL(url + "?" + URLEncoder.encode(finalmessage, "UTF-8")).openConnection();
+            String encodedMessage = URLEncoder.encode(finalMessage, "UTF-8");
+            String finalUrl = url + "?" + encodedMessage;
+
+            HttpsURLConnection conn = (HttpsURLConnection) new URL(finalUrl).openConnection();
             conn.setSSLSocketFactory(sslContext.getSocketFactory());
             conn.setDoOutput(true);
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.connect();
 
-            BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuffer responseBuffer = new StringBuffer();
-            String line;
-            while ((line = rd.readLine()) != null) {
-                responseBuffer.append(line);
+            try (BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                StringBuilder responseBuffer = new StringBuilder();
+                String line;
+                while ((line = rd.readLine()) != null) {
+                    responseBuffer.append(line);
+                }
+                log.info("SMS sent, response: {}", responseBuffer.toString());
+            } finally {
+                conn.disconnect();
             }
-            log.info("SMS sent, response: {}", responseBuffer.toString());
-            rd.close();
-            conn.disconnect();
 
         } catch (Exception e) {
-            log.error("Error occurred while sending SMS to : " + sms.getMobileNumber(), e);
+            log.error("Error occurred while sending SMS to: " + sms.getMobileNumber(), e);
         }
     }
 
-    private void postProcessor(MultiValueMap<String, String> requestBody) {
-        // Example logic to modify requestBody before sending it, if needed
-        if (!requestBody.containsKey("extraKey")) {
-            requestBody.add("extraKey", "extraValue");
+    private String encodeMessage(String message) {
+        StringBuilder encodedMessage = new StringBuilder();
+        for (int i = 0; i < message.length(); i++) {
+            char ch = message.charAt(i);
+            int j = (int) ch;
+            encodedMessage.append("&#").append(j).append(";");
         }
-    }
-
-    private String hashGenerator(String userName, String senderId, String content, String secureKey) {
-        try {
-            String data = userName + senderId + content + secureKey;
-
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hashInBytes = md.digest(data.getBytes(StandardCharsets.UTF_8));
-
-            // Convert byte array into signum representation
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashInBytes) {
-                sb.append(String.format("%02x", b));
-            }
-
-            return sb.toString();  // Return the hashed value
-        } catch (Exception e) {
-            log.error("Error generating hash: ", e);
-        }
-
-        return null;  // Return null or a default value in case of an error
+        return encodedMessage.toString();
     }
 }
