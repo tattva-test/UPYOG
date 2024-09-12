@@ -19,15 +19,6 @@ WORKDIR /opt/egov
 # Copy the built application and the startup script from the build stage
 COPY --from=build /app/target/*.jar /app/start.sh /opt/egov/
 
-# Copy the certificate to the runtime image
-COPY ${WORK_DIR}/smsgwsmsgovin.cer /opt/egov/smsgwsmsgovin.cer
-
-# Add the certificate to the JVM truststore
-RUN keytool -importcert -noprompt -trustcacerts \
-    -alias msdgweb_mgov_gov_in \
-    -keystore $JAVA_HOME/lib/security/cacerts \
-    -storepass changeit \
-    -file /opt/egov/smsgwsmsgovin.cer
 
 # Ensure the start script is executable
 RUN chmod +x /opt/egov/start.sh
