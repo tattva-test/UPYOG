@@ -48,6 +48,10 @@ public class MSDGSMSServiceImpl extends BaseSMSService {
                 log.info("Checking certificate");
 
                 try (InputStream is = getClass().getClassLoader().getResourceAsStream("smsgwsmsgovin.cer")) {
+                    if (is == null) {
+                        throw new IOException("Certificate file not found");
+                    }
+
                     CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
                     X509Certificate caCert = (X509Certificate) certFactory.generateCertificate(is);
 
