@@ -1,0 +1,78 @@
+{
+  "Income": [
+    {
+      "value": "100000",
+      "label": "upto 100000"
+    },
+    {
+      "value": "200000",
+      "label": "100001 TO 200000"
+    },
+    {
+      "value": "200001",
+      "label": "Above 200000"
+    }
+  ],
+  "board": [
+    {
+      "value": "SSC",
+      "label": "SSC"
+    },
+    {
+      "value": "CBSE",
+      "label": "CBSE"
+    },
+    {
+      "value": "ICSE",
+      "label": "ICSE"
+    },
+    {
+      "value": "STATE BOARD",
+      "label": "STATE BOARD"
+    },
+    {
+      "value": "DEEMED UNIVERSITY",
+      "label": "DEEMED UNIVERSITY"
+    },
+    {
+      "value": "STATE UNIVERSITY",
+      "label": "STATE UNIVERSITY"
+    },
+    {
+      "value": "CENTRAL UNIVERSITY",
+      "label": "CENTRAL UNIVERSITY"
+    },
+    {
+      "value": "PRIVATE UNIVERSITY",
+      "label": "PRIVATE UNIVERSITY"
+    }
+  ],
+  "gender": [
+    {
+      "id": 2,
+      "name": "MALE"
+    },
+    {
+      "id": 1,
+      "name": "FEMALE"
+    },
+    {
+      "id": 3,
+      "name": "TRANSGENDER"
+    }
+  ],
+  "title": [
+    {
+      "id": 1,
+      "name": "MR"
+    },
+    {
+      "id": 2,
+      "name": "MRS"
+    },
+    {
+      "id": 3,
+      "name": "MISS"
+    }
+  ]
+}
