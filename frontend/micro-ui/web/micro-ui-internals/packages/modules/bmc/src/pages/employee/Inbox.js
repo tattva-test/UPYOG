@@ -5,7 +5,7 @@ import DesktopInbox from "../../components/inbox/DestopInbox";
 import MobileInbox from "../../components/inbox/MobileInbox";
 
 const Inbox = ({ parentRoute, businessService = "BMC", initialStates = {}, filterComponent, isInbox }) => {
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code || Digit.ULBService.getCurrentTenantId();
   //const { isLoading: isLoading, Errors, data: res } = Digit.Hooks.hrms.useHRMSCount(tenantId);
 
   const { t } = useTranslation();

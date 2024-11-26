@@ -1,4 +1,4 @@
-import { AppContainer, CitizenHomeCard, Loader } from "@upyog/digit-ui-react-components";
+import { AppContainer, CitizenHomeCard, Loader, PTIcon } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Switch, useRouteMatch } from "react-router-dom";
@@ -15,7 +15,7 @@ import ApplicationDetail from "./pagecomponents/applicationDetail";
 import BMCReviewPage from "./pagecomponents/bmcReview";
 import SelectSchemePage from "./pagecomponents/selectScheme";
 import BMCCitizenHome from "./pages/citizen";
-import SchemeDetailsPage from "./components/schemeDetails"
+import SchemeDetailsPage from "./components/schemeDetails";
 
 //Employee Pages
 import BMCCard from "./components/BMCCard";
@@ -25,33 +25,21 @@ import SearchApplications from "./components/SearchApplications";
 import WorkflowActions from "./components/Workflow";
 import BMCEmployeeHome from "./pages/employee";
 import ApprovePage from "./pages/employee/Approve";
-import BMCInbox from './pages/employee/Inbox';
+import BMCInbox from "./pages/employee/Inbox";
 import AadhaarEmployeePage from "./pages/employee/aadhaarEmployee";
 import AadhaarSatutsVerificationPage from "./pages/employee/aadhaarSatutsVerification";
 import AadhaarVerifyPage from "./pages/employee/aadhaarVerify";
-import CrossVerifyPage from "./pages/employee/crossVerify";
 import RandmizationPage from "./pages/employee/randmization";
 //Master Pages
-import {
-  bankMasterPage,
-  casteCategoryMasterPage,
-  courseMasterPage,
-  courseWiseApplication,
-  electoralMasterPage,
-  qualificationMasterPage,
-  religionMasterPage,
-  schemeWiseApplication,
-  sectorMasterPage,
-  wardMasterPage,
-  wardWiseApplication,
-} from "./pages/master/aadhaarMaster";
-
 
 import getRootReducer from "./redux/reducers";
-
+import DocumentCard from "./components/DocumentCard";
+import UserOthersDetails from "./components/userOthersDetails";
+import BankDetailsForm from "./components/BankDetails";
+import AllApplicationsPage from "./components/AllApplications";
 
 export const BMCModule = ({ stateCode, userType, tenants }) => {
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code || Digit.ULBService.getCurrentTenantId();
   const language = Digit.StoreData.getCurrentLanguage();
   const { path, url } = useRouteMatch();
   const moduleCode = ["BMC"];
@@ -66,17 +54,21 @@ export const BMCModule = ({ stateCode, userType, tenants }) => {
     return <Loader />;
   }
   if (userType === "citizen") {
-    return (<Switch>
-      <AppContainer className="ground-container">
-        <BMCCitizenHome path={path} stateCode={stateCode} />
-      </AppContainer>
-    </Switch>);
+    return (
+      <Switch>
+        <AppContainer className="ground-container">
+          <BMCCitizenHome path={path} stateCode={stateCode} />
+        </AppContainer>
+      </Switch>
+    );
   }
-  return (<Switch>
-    <AppContainer className="ground-container">
-      <BMCEmployeeHome path={path} stateCode={stateCode} />
-    </AppContainer>
-  </Switch>);
+  return (
+    <Switch>
+      <AppContainer className="ground-container">
+        <BMCEmployeeHome path={path} stateCode={stateCode} />
+      </AppContainer>
+    </Switch>
+  );
 };
 
 export const BMCLinks = ({ matchPath }) => {
@@ -107,22 +99,10 @@ const componentsToRegister = {
   AadhaarFullForm,
   SelectSchemePage,
   BMCReviewPage,
-  wardMasterPage,
-  electoralMasterPage,
-  religionMasterPage,
-  casteCategoryMasterPage,
-  bankMasterPage,
-  qualificationMasterPage,
-  sectorMasterPage,
-  courseMasterPage,
   AadhaarSatutsVerificationPage,
   AadhaarEmployeePage,
   RandmizationPage,
-  wardWiseApplication,
-  schemeWiseApplication,
-  courseWiseApplication,
   AadhaarVerifyPage,
-  CrossVerifyPage,
   ApprovePage,
   BMCCard,
   BMCInbox,
@@ -135,6 +115,10 @@ const componentsToRegister = {
   SearchApplications,
   SchemeDetailsPage,
   BMC_INBOX_FILTER: (props) => <InboxFilter {...props} />,
+  DocumentCard,
+  UserOthersDetails,
+  BankDetailsForm,
+  AllApplicationsPage,
 };
 
 export const initBMCComponents = () => {

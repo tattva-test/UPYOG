@@ -1,10 +1,12 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const Pagination = ({ totalRecords, rowsPerPage, currentPage, onPageChange, onRowsPerPageChange }) => {
+  const { t } = useTranslation();
   const totalPages = Math.ceil(totalRecords / rowsPerPage);
 
   const handlePageChange = (page) => {
-    if (page !== currentPage) {
+    if (page !== currentPage && page >= 1 && page <= totalPages) {
       onPageChange(page);
     }
   };
@@ -15,8 +17,14 @@ const Pagination = ({ totalRecords, rowsPerPage, currentPage, onPageChange, onRo
       pageNumbers.push(i);
     }
     return pageNumbers.map((page) => (
-      <li key={page} className={`page-item ${page === currentPage ? "active" : ""}`} onClick={() => handlePageChange(page)}>
-        <button className="page-link">{page}</button>
+      <li
+        key={page}
+        className={`page-item ${page === currentPage ? "active" : ""} ${totalRecords === 0 ? "disabled" : ""}`}
+        onClick={() => handlePageChange(page)}
+      >
+        <button className="page-link" disabled={page === currentPage}>
+          {page}
+        </button>
       </li>
     ));
   };
@@ -25,8 +33,9 @@ const Pagination = ({ totalRecords, rowsPerPage, currentPage, onPageChange, onRo
     <React.Fragment>
       <div className="bmc-pagination-container">
         <div className="bmc-pagination-info">
-          Showing {(currentPage - 1) * rowsPerPage + 1} to {Math.min(currentPage * rowsPerPage, totalRecords)} of {totalRecords} records
-          <span style={{ paddingLeft: "10px" }}>Rows per page:</span>
+          {t("Showing")} {(currentPage - 1) * rowsPerPage + 1} {t("to")} {Math.min(currentPage * rowsPerPage, totalRecords)} {t("of")} {totalRecords}{" "}
+          {t("records")}
+          <span style={{ paddingLeft: "10px" }}>{t("Rows per page")}:</span>
           <select value={rowsPerPage} onChange={(e) => onRowsPerPageChange(Number(e.target.value))}>
             <option value={15}>15</option>
             <option value={30}>30</option>
@@ -35,14 +44,17 @@ const Pagination = ({ totalRecords, rowsPerPage, currentPage, onPageChange, onRo
           </select>
         </div>
         <ul className="bmc-pagination">
-          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`} onClick={() => handlePageChange(currentPage - 1)}>
-            <button className="page-link" aria-label="Previous">
+          <li className={`page-item ${currentPage === 1 || totalRecords === 0 ? "disabled" : ""}`} onClick={() => handlePageChange(currentPage - 1)}>
+            <button className="page-link" aria-label="Previous" disabled={currentPage === 1 || totalRecords === 0}>
               &laquo;
             </button>
           </li>
           {renderPaginationNumbers()}
-          <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`} onClick={() => handlePageChange(currentPage + 1)}>
-            <button className="page-link" aria-label="Next">
+          <li
+            className={`page-item ${currentPage === totalPages || totalRecords === 0 ? "disabled" : ""}`}
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
+            <button className="page-link" aria-label="Next" disabled={currentPage === totalPages || totalRecords === 0}>
               &raquo;
             </button>
           </li>

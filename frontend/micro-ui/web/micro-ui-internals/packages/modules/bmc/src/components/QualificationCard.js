@@ -3,20 +3,22 @@ import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import dropdownOptions from "../pagecomponents/dropdownOptions.json";
+import { useMemo } from "react";
 
-const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = true, AllowRemove = true, ...props }) => {
+const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = true, AllowRemove = true }) => {
   const { t } = useTranslation();
 
-  const initialDefaultValues = {
-    qualification: null,
-    yearOfPassing: null,
-    percentage: 0,
-    board: null,
-  };
+  const initialDefaultValues = useMemo(() => {
+    return {
+      qualification: null,
+      yearOfPassing: null,
+      percentage: 0,
+      board: null,
+    };
+  }, []);
 
   const processQualificationData = (items, headerLocale) => {
-    if (!Array.isArray(items)) return null;
-
+    if (items.length === 0) return [];
     return items
       .map((item) => {
         if (typeof item === "object" && item.qualificationId && item.qualification) {
@@ -36,8 +38,6 @@ const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = t
       .filter((item) => item !== null); // Filter out null values in case of invalid items
   };
 
-  const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
-  const [qualifications, setQualifications] = useState([]);
   const processCommonData = (data, headerLocale) => {
     return (
       data?.CommonDetails?.map((item) => ({
@@ -48,6 +48,9 @@ const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = t
     );
   };
 
+  const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
+  const [qualifications, setQualifications] = useState([]);
+
   const qualificationFunction = (data) => {
     const qualificationData = processCommonData(data, headerLocale);
     setQualifications(qualificationData);
@@ -56,6 +59,7 @@ const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = t
 
   const getQualification = { CommonSearchCriteria: { Option: "qualification" } };
   Digit.Hooks.bmc.useCommonGet(getQualification, { select: qualificationFunction });
+
   const {
     control,
     handleSubmit,
@@ -65,44 +69,62 @@ const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = t
   } = useForm({
     defaultValues: initialDefaultValues,
   });
+
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
     const processedRows = processQualificationData(initialRows, headerLocale);
-    setRows(processedRows);
-  }, [initialRows, headerLocale]);
+    if (!processedRows || processedRows.length === 0) {
+      //setRows([initialDefaultValues]); // Ensure at least one row is available
+    } else {
+      setRows(processedRows);
+    }
+  }, [initialRows, headerLocale, initialDefaultValues]);
 
-  // const years = Array.from({ length: new Date().getFullYear() - 1989 }, (v, k) => ({
-  //   label: `${1990 + k}`,
-  //   value: 1990 + k,
-  // }));
-
-  const dynamicStartYear = new Date().getFullYear() - 100;
+  //TODO: this should be as per DOB
+  const dynamicStartYear = new Date().getFullYear() - 49;
   const currentYear = new Date().getFullYear();
 
   const years = Array.from({ length: currentYear - dynamicStartYear + 1 }, (v, k) => ({
     label: `${dynamicStartYear + k}`,
     value: dynamicStartYear + k,
   }));
-
+  // Object
   const addRow = () => {
     const formData = getValues();
-    const updatedRows = [
-      ...rows,
-      {
-        qualification: formData.qualification,
-        yearOfPassing: formData.yearOfPassing,
-        percentage: formData.percentage,
-        board: formData.board,
-      },
-    ];
+
+    const newRow = {
+      qualification: formData.qualification || "",
+      yearOfPassing: formData.yearOfPassing || "",
+      percentage: formData.percentage,
+      board: formData.board,
+    };
+
+    // Check if the qualification already exists in rows
+    const isDuplicate = rows.some((row) => row.qualification === newRow.qualification);
+
+    if (isDuplicate) {
+      alert("Duplicate qualification detected, not adding.");
+      return; // Stop the function execution to avoid adding a duplicate qualification
+    }
+
+    // If not a duplicate, proceed to add the row
+    const updatedRows = [...rows, newRow].sort((a, b) => {
+      if (a.qualification || a.yearOfPassing < b.qualification || b.yearOfPassing) return -1;
+      if (a.qualification || a.yearOfPassing > b.qualification || b.yearOfPassing) return 1;
+      return 0;
+    });
     setRows(updatedRows);
-    // reset(initialDefaultValues);
+    reset(initialDefaultValues);
     onUpdate(updatedRows); // Call the callback function to update the parent component
   };
 
   const removeRow = (index) => {
-    const updatedRows = rows.filter((row, i) => i !== index);
+    const updatedRows = rows.filter((row, i) => i !== index).sort((a, b) => {
+      if (a.qualification || a.yearOfPassing < b.qualification || b.yearOfPassing) return -1;
+      if (a.qualification || a.yearOfPassing > b.qualification || b.yearOfPassing) return 1;
+      return 0;
+    });
     setRows(updatedRows);
     onUpdate(updatedRows); // Call the callback function to update the parent component
   };
@@ -111,23 +133,23 @@ const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = t
     <React.Fragment>
       <div className="bmc-row-card-header">
         <div className="bmc-card-row">
-          <div className="bmc-title">{t("QUALIFICATION")}</div>
-          <div className="bmc-table-container" style={{ padding: "1rem" }}>
+          <div className="bmc-title">{t("BMC_QUALIFICATION_DETAILS")}</div>
+          <div className="bmc-table-container" style={{ padding: ".2rem" }}>
             <form onSubmit={handleSubmit(addRow)}>
               <table className="bmc-hover-table">
                 <thead>
                   <tr>
-                    <th scope="col">Qualification</th>
-                    <th scope="col">Year of Passing</th>
-                    <th scope="col">Percentage</th>
-                    <th scope="col">Board</th>
+                    <th scope="col">{t("BMC_QUALIFICATION")}</th>
+                    <th scope="col">{t("BMC_YEAR_OF_PASSING")}</th>
+                    <th scope="col">{t("BMC_BOARD")}</th>
+                    <th scope="col">{t("BMC_PERCENTAGE")}</th>
                     {AllowRemove && <th scope="col"></th>}
                   </tr>
                 </thead>
                 <tbody>
                   {AddOption && (
                     <tr>
-                      <td data-label="Qualification" style={{ textAlign: "left" }}>
+                      <td data-label={t("BMC_QUALIFICATION")} style={{ textAlign: "left" }}>
                         <Controller
                           control={control}
                           name="qualification"
@@ -135,21 +157,20 @@ const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = t
                           render={(props) => (
                             <div>
                               <Dropdown
-                                placeholder="SELECT THE EDUCATION QUALIFICATION"
+                                placeholder={t("SELECT THE EDUCATION QUALIFICATION")}
                                 selected={props.value}
                                 select={(qualification) => props.onChange(qualification)}
                                 option={qualifications}
                                 optionKey="i18nKey"
                                 t={t}
-                                isMandatory={true}
                                 className="employee-select-wrap bmc-form-field"
                               />
-                              {errors.qualification && <span style={{ color: "red" }}>{errors.qualification.message}</span>}
+                              {errors.qualification && <sup style={{ color: "red", fontSize: "x-small" }}>{errors.qualification.message}</sup>}
                             </div>
                           )}
                         />
                       </td>
-                      <td data-label="Year of Passing" style={{ textAlign: "left" }}>
+                      <td data-label={t("BMC_YEAR_OF_PASSING")} style={{ textAlign: "left" }}>
                         <Controller
                           control={control}
                           name="yearOfPassing"
@@ -157,21 +178,41 @@ const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = t
                           render={(props) => (
                             <div>
                               <Dropdown
-                                placeholder="SELECT YEAR OF PASSING"
+                                placeholder={t("SELECT YEAR OF PASSING")}
                                 selected={props.value}
                                 select={(year) => props.onChange(year)}
                                 option={years}
                                 optionKey="value"
                                 t={t}
-                                isMandatory={true}
                                 className="employee-select-wrap bmc-form-field"
                               />
-                              {errors.yearOfPassing && <span style={{ color: "red" }}>{errors.yearOfPassing.message}</span>}
+                              {errors.yearOfPassing && <sup style={{ color: "red", fontSize: "x-small" }}>{errors.yearOfPassing.message}</sup>}
                             </div>
                           )}
                         />
                       </td>
-                      <td data-label="Percentage" style={{ textAlign: "left" }}>
+                      <td data-label={t("BMC_BOARD")} style={{ textAlign: "left" }}>
+                        <Controller
+                          control={control}
+                          name="board"
+                          rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                          render={(props) => (
+                            <div>
+                              <Dropdown
+                                placeholder={t("SELECT BOARD")}
+                                selected={props.value}
+                                select={(board) => props.onChange(board)}
+                                option={dropdownOptions.board}
+                                optionKey="value"
+                                t={t}
+                                className="employee-select-wrap bmc-form-field"
+                              />
+                              {errors.board && <sup style={{ color: "red", fontSize: "x-small" }}>{errors.board.message}</sup>}
+                            </div>
+                          )}
+                        />
+                      </td>
+                      <td data-label={t("BMC_PERCENTAGE")} style={{ textAlign: "left" }}>
                         <Controller
                           control={control}
                           name="percentage"
@@ -189,40 +230,20 @@ const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = t
                           render={(props) => (
                             <div>
                               <TextInput
-                                name="percentage"
+                                placeholder={t("Percentage")}
                                 value={props.value}
                                 onChange={props.onChange}
-                                placeholder="Percentage"
-                                type="number"
-                                optionKey="value"
-                              />
-                              {errors.percentage && <span style={{ color: "red" }}>{errors.percentage.message}</span>}
-                            </div>
-                          )}
-                        />
-                      </td>
-                      <td data-label="Board" style={{ textAlign: "left" }}>
-                        <Controller
-                          control={control}
-                          name="board"
-                          rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-                          render={(props) => (
-                            <div>
-                              <Dropdown
-                                placeholder="SELECT BOARD"
-                                selected={props.value}
-                                select={(board) => props.onChange(board)}
-                                option={dropdownOptions.board}
-                                optionKey="value"
+                                type={"number"}
+                                onBlur={props.onBlur}
                                 t={t}
-                                isMandatory={true}
                               />
-                              {errors.board && <span style={{ color: "red" }}>{errors.board.message}</span>}
+                              {errors.percentage && <sup style={{ color: "red", fontSize: "x-small" }}>{errors.percentage.message}</sup>}
                             </div>
                           )}
                         />
                       </td>
-                      <td data-label="Add Row">
+
+                      <td data-label={t("BMC_ADD_ROW")}>
                         <button type="submit">
                           <AddIcon className="bmc-add-icon" />
                         </button>
@@ -231,13 +252,13 @@ const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = t
                   )}
 
                   {rows.map((row, index) => (
-                    <tr key={index}>
-                      <td>{row.qualification ? row.qualification.i18nKey : "-"}</td>
-                      <td>{row.yearOfPassing ? row.yearOfPassing.label : "-"}</td>
-                      <td>{row.percentage}</td>
-                      <td>{row.board ? row.board.label : "-"}</td>
+                    <tr key={index} className="bmc-table-row">
+                      <td data-label={t("BMC_QUALIFICATION")}>{t(row.qualification.i18nKey)}</td>
+                      <td data-label={t("BMC_YEAR_OF_PASSING")}>{t(row.yearOfPassing.value)}</td>
+                      <td data-label={t("BMC_BOARD")}>{t(row.board ? row.board.label : "-")}</td>
+                      <td data-label={t("BMC_PERCENTAGE")}>{t(row.percentage) + "%"}</td>
                       {AllowRemove && (
-                        <td data-label="Remove Row">
+                        <td data-label={t("Remove Row")}>
                           <button type="button" onClick={() => removeRow(index)}>
                             <RemoveIcon className="bmc-remove-icon" />
                           </button>

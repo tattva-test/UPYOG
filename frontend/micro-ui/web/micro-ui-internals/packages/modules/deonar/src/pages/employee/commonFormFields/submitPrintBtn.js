@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { CardLabel, Dropdown, LabelFieldPair, TextInput, DatePicker } from "@upyog/digit-ui-react-components";
 import { Controller, useForm } from "react-hook-form";
 
-const SubmitPrintButtonFields = () => {
+const SubmitPrintButtonFields = ({submit, print}) => {
   const { t } = useTranslation();
 
   return (

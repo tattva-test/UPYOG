@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-const SearchApplications = ({ onUpdate }) => {
+const SearchApplications = ({ onUpdate, actions }) => {
   const { t } = useTranslation();
   const {
     control,
@@ -16,6 +16,7 @@ const SearchApplications = ({ onUpdate }) => {
       scheme: "",
       details: "",
     },
+    mode: "onChange",
   });
   const [schemeHeads, setSchemeHeads] = useState([]);
   const [schemes, setSchemes] = useState([]);
@@ -24,7 +25,7 @@ const SearchApplications = ({ onUpdate }) => {
   const [selectedScheme, setSelectedScheme] = useState("");
   const [selectedDetail, setSelectedDetail] = useState("");
   const [selectedType, setSelectedType] = useState("");
-  const getSchemes = { SchemeSearchCriteria: { Status: 1, sla: 30 } };
+  const getSchemes = { SchemeSearchCriteria: { Status: 1, sla: 30, action: actions } };
   const { data: SCHEME_DATA } = Digit.Hooks.bmc.useSchemesGet(getSchemes);
 
   useEffect(() => {
@@ -38,6 +39,7 @@ const SearchApplications = ({ onUpdate }) => {
             schemeHeadMap.set(schemeHead.schemeHead, {
               schemeHead: schemeHead.schemeHead,
               schemeheadDesc: schemeHead.schemeheadDesc,
+              schemeHeadApplicationCount: schemeHead?.schemeHeadApplicationCount || 0,
               schemeDetails: [...schemeHead.schemeDetails],
             });
           } else {
@@ -79,12 +81,21 @@ const SearchApplications = ({ onUpdate }) => {
     setSelectedType(selected.type);
   };
 
-  const schemeHeadOptions = schemeHeads.map((head) => ({ value: head.schemeHead, label: head.schemeHead }));
-  const schemeOptions = schemes.map((scheme) => ({ value: scheme.schemeID, label: scheme.schemeName }));
+  const schemeHeadOptions = schemeHeads.map((head) => ({
+    value: head.schemeHead,
+    label: `${t(head.schemeHead)} (${head.schemeHeadApplicationCount || 0})`,
+  }));
+
+  const schemeOptions = schemes.map((scheme) => ({
+    value: scheme.schemeID,
+    label: `${t(scheme.schemeName)} (${scheme.schemeApplicationCount || 0})`,
+  }));
 
   const detailOptions = details.map((detail) => ({
     value: detail.machID || detail.courseID,
-    label: detail.machName || detail.courseName,
+    label: `${t(detail.machName || detail.courseName)} (${
+      detail.machID ? detail.machineWiseApplicationCount || 0 : detail.courseWiseApplicationCount || 0
+    })`,
     type: detail.machID ? "machine" : "course",
   }));
 
@@ -104,7 +115,6 @@ const SearchApplications = ({ onUpdate }) => {
     if (selectedType) {
       searchCriteria.type = selectedType;
     }
-
     if (onUpdate) {
       onUpdate(searchCriteria);
     }
@@ -120,7 +130,9 @@ const SearchApplications = ({ onUpdate }) => {
         <div className="bmc-card-row">
           <div className="bmc-col3-card">
             <LabelFieldPair>
-              <CardLabel className="bmc-label">{t("Scheme Heads")}</CardLabel>
+              <CardLabel className="bmc-label">
+                {t("Scheme Heads")}&nbsp;{errors.schemeHead && <sup style={{ color: "red", fontSize: "x-small" }}>{errors.schemeHead.message}</sup>}
+              </CardLabel>
               <Controller
                 control={control}
                 name="schemeHead"
@@ -131,16 +143,25 @@ const SearchApplications = ({ onUpdate }) => {
                       placeholder={t("Select Scheme Head")}
                       selected={value}
                       defaultValue={""}
-                      select={(value) => {
-                        onChange(value);
-                        handleSchemeHeadChange(value);
+                      select={(selectedValue) => {
+                        const isValid = schemeHeadOptions.some((option) => option.value === selectedValue.value);
+
+                        if (isValid) {
+                          onChange(selectedValue);
+                          handleSchemeHeadChange(selectedValue);
+                        } else {
+                          onChange("");
+                          setSelectedScheme("");
+                          setSelectedDetail("");
+                          setDetails([]);
+                          clearErrors("schemeHead");
+                        }
                       }}
                       onBlur={onBlur}
                       option={schemeHeadOptions}
-                      optionKey="value"
+                      optionKey="label"
                       t={t}
                     />
-                    {errors.schemeHead && <span style={{ color: "red" }}>{errors.schemeHead.message}</span>}
                   </div>
                 )}
               />
@@ -148,7 +169,9 @@ const SearchApplications = ({ onUpdate }) => {
           </div>
           <div className="bmc-col3-card">
             <LabelFieldPair>
-              <CardLabel className="bmc-label">{t("Schemes")}</CardLabel>
+              <CardLabel className="bmc-label">
+                {t("Schemes")}&nbsp;{errors.scheme && <sup style={{ color: "red", fontSize: "x-small" }}>{errors.scheme.message}</sup>}
+              </CardLabel>
               <Controller
                 control={control}
                 name="scheme"
@@ -168,7 +191,6 @@ const SearchApplications = ({ onUpdate }) => {
                       t={t}
                       disabled={!selectedSchemeHead}
                     />
-                    {errors.scheme && <span style={{ color: "red" }}>{errors.scheme.message}</span>}
                   </div>
                 )}
               />
@@ -201,8 +223,13 @@ const SearchApplications = ({ onUpdate }) => {
             </LabelFieldPair>
           </div>
           <div className="bmc-col3-card">
-            <div className="bmc-search-button" style={{ textAlign: "end" }}>
-              <button className="bmc-card-button" onClick={handleSearch} style={{ borderBottom: "3px solid black" }}>
+            <div className="bmc-search-button" style={{ textAlign: "end", paddingTop: "21px" }}>
+              <button
+                className="bmc-card-button"
+                onClick={handleSearch}
+                style={{ borderBottom: "3px solid black" }}
+                disabled={!isValid || Object.keys(errors).length > 0}
+              >
                 {t("Search")}
               </button>
             </div>

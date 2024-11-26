@@ -30,6 +30,11 @@ const SchemeService = {
       method: "POST",
       auth: true,
       userService: true,
+      headers: {
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
     });
   },
   saveUserDetails: (data) => {
@@ -65,10 +70,42 @@ const SchemeService = {
     });
   },
 
+  getverifyScheme: (data) => {
+    return Request({
+      data: data,
+      url: Urls.schemes.verifyScheme,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+    });
+  },
+
   getBanks: (data) => {
     return Request({
       data: data,
       url: Urls.common.getBanks,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+    });
+  },
+  getCount: (data) => {
+    return Request({
+      data: data,
+      url: Urls.schemes.getCount,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+    });
+  },
+
+  getAllApplications: (data) => {
+    return Request({
+      data: data,
+      url: Urls.users.getAllApplications,
       useCache: false,
       method: "POST",
       auth: true,
