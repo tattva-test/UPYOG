@@ -306,6 +306,7 @@ public class UserService {
 		for (BankDetails details : userRequest.getBankDetailsList()) {
 			details.setUserId(userId);
 			details.setTenantId(tenantId);
+			details.setIsActive(true);
 			details.setCreatedBy("system");
 			details.setModifiedBy("system");
 			details.setModifiedOn(time);
@@ -319,6 +320,7 @@ public class UserService {
 				details.setCreatedBy("system");
 				details.setCreatedOn(time);
 				details.setModifiedBy("system");
+				details.setAvailable(true);
 				details.setModifiedOn(time);
 			}
 		}
