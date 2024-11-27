@@ -2,12 +2,10 @@ package digit.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
@@ -42,7 +40,6 @@ import digit.web.models.UserSchemeApplicationRequest;
 import digit.web.models.employee.ApplicationCountRequest;
 import digit.web.models.user.Board;
 import digit.web.models.user.DocumentDetails;
-import digit.web.models.user.InputTest;
 import digit.web.models.user.Qualification;
 import digit.web.models.user.QualificationDetails;
 import digit.web.models.user.QualificationSave;
@@ -272,6 +269,7 @@ public class BmcApplicationService {
         String userBanksJson = gson.toJson(userDetails.getBankDetail());
         String userQualificationsJson = gson.toJson(qlist);  
         snapshot.setAadharUser(userDetails.getAadharUser());
+        snapshot.getAadharUser().setAadharName(userDetails.getTitle()+". "+snapshot.getAadharUser().getAadharName());
         snapshot.setUserOtherDetails(uod);
         snapshot.setUserAddressDetails(userDetails.getAddress());
         snapshot.setBankDetailsList(userBanksJson);

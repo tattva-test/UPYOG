@@ -6,13 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.HashMap;
-import java.sql.SQLException;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import digit.bmc.model.SchemeCriteria;
 import digit.bmc.model.UserSchemeApplication;
@@ -20,7 +19,6 @@ import digit.bmc.model.VerificationDetails;
 import digit.repository.querybuilder.EmployeeGetApplicationQueryBuilder;
 import digit.repository.querybuilder.SchemeApplicationQueryBuilder;
 import digit.repository.querybuilder.SchemeBenificiaryBuilder;
-import digit.repository.querybuilder.VerifierQueryBuilder;
 import digit.repository.rowmapper.SchemeApplicationRowMapper;
 import digit.repository.rowmapper.SchemeApplicationStatusRowMapper;
 import digit.repository.rowmapper.SchemeBeneficiaryRowMapper;
@@ -46,9 +44,6 @@ public class SchemeApplicationRepository {
     private SchemeBeneficiaryRowMapper schemeBeneficiaryRowMapper;
     @Autowired
     private SchemeBenificiaryBuilder schemeBenificiaryBuilder;
-    
-    @Autowired
-    private VerifierQueryBuilder verifierQueryBuilder;
     
     @Autowired
     private VerificationDetailsRowMapper verificationDetailsRowMapper;

@@ -34,6 +34,7 @@ import digit.web.models.SchemeApplication;
 import digit.web.models.SchemeApplicationRequest;
 import digit.web.models.user.InputTest;
 import digit.web.models.user.QualificationSave;
+import digit.web.models.user.RemoveRequest;
 import digit.web.models.user.UpdatedDocument;
 import digit.web.models.user.UserDetails;
 
@@ -222,15 +223,15 @@ public class UserService {
 		tenantId = tenantId != null && tenantId.length() >= 2 ? tenantId.substring(0, 2) : tenantId;
 		Long time = System.currentTimeMillis();
 
-		for(UpdatedDocument document : userRequest.getUpdatedDocuments()) {
-			document.getDocumentDetails().setUserId(userId);
-			document.getDocumentDetails().setAvailable(true);
-			document.getDocumentDetails().setTenantId(tenantId);
-			document.getDocumentDetails().setCreatedBy("system");
-			document.getDocumentDetails().setModifiedBy("system");
-			document.getDocumentDetails().setModifiedOn(time);
-		}
-		producer.push("upsert-user-document", userRequest);
+		// for(UpdatedDocument document : userRequest.getUpdatedDocuments()) {
+		// 	document.getDocumentDetails().setUserId(userId);
+		// 	document.getDocumentDetails().setAvailable(true);
+		// 	document.getDocumentDetails().setTenantId(tenantId);
+		// 	document.getDocumentDetails().setCreatedBy("system");
+		// 	document.getDocumentDetails().setModifiedBy("system");
+		// 	document.getDocumentDetails().setModifiedOn(time);
+		// }
+		// producer.push("upsert-user-document", userRequest);
 
 		userRequest.setAadharUser(new AadharUser());
 		userRequest.getAadharUser().setUserId(userId);
@@ -303,30 +304,106 @@ public class UserService {
 			producer.push("insert-useraddress", userRequest);
 		}
 
-		for (BankDetails details : userRequest.getBankDetailsList()) {
-			details.setUserId(userId);
-			details.setTenantId(tenantId);
-			details.setCreatedBy("system");
-			details.setModifiedBy("system");
-			details.setModifiedOn(time);
-		}
+		// for (BankDetails details : userRequest.getBankDetailsList()) {
+		// 	details.setUserId(userId);
+		// 	details.setTenantId(tenantId);
+		// 	details.setCreatedBy("system");
+		// 	details.setModifiedBy("system");
+		// 	details.setModifiedOn(time);
+		// }
 
-		if (!ObjectUtils.isEmpty(userRequest.getQualificationDetailsList())) {
-			for (QualificationSave details : userRequest.getQualificationDetailsList()) {
+		// if (!ObjectUtils.isEmpty(userRequest.getQualificationDetailsList())) {
+		// 	for (QualificationSave details : userRequest.getQualificationDetailsList()) {
 
-				details.setUserId(userId);
+		// 		details.setUserId(userId);
 
-				details.setCreatedBy("system");
-				details.setCreatedOn(time);
-				details.setModifiedBy("system");
-				details.setModifiedOn(time);
-			}
-		}
-	    producer.push("upsert-userbank", userRequest);
-	    producer.push("upsert-userqualification", userRequest);
+		// 		details.setCreatedBy("system");
+		// 		details.setCreatedOn(time);
+		// 		details.setModifiedBy("system");
+		// 		details.setModifiedOn(time);
+		// 	}
+		// }
+	    // producer.push("upsert-userbank", userRequest);
+	    // producer.push("upsert-userqualification", userRequest);
 	    producer.push("upsert-aadharuser", userRequest);
 	    producer.push("upsert-userotherdetails", userRequest);
 		return userRequest;
 	}
+
+	public Integer removeUserDocument(RemoveRequest userRequest) {
+
+		switch (userRequest.getRemovalcriteria().getOption()) {
+
+			case "document":
+
+				userRepository.removeUserDocument(userRequest);
+				break;
+
+			case "qualification":
+
+				userRepository.removeUserQualification(userRequest);
+				break;
+
+			case "bank":
+
+				userRepository.removeUserBank(userRequest);
+				break;
+
+		}
+		
+		return userRepository.removeUserDocument(userRequest);
+
+    }
+
+
+
+
+	public void saveUserDocument(InputTest userRequest) {
+		userRequest.getUpdatedDocuments().forEach(document -> {
+			document.getDocumentDetails().setUserId(userRequest.getRequestInfo().getUserInfo().getId());
+			document.getDocumentDetails().setAvailable(true); 
+			document.getDocumentDetails().setTenantId(userRequest.getRequestInfo().getUserInfo().getTenantId() != null && userRequest.getRequestInfo().getUserInfo().getTenantId().length() >= 2 ? userRequest.getRequestInfo().getUserInfo().getTenantId().substring(0, 2) : userRequest.getRequestInfo().getUserInfo().getTenantId());
+			document.getDocumentDetails().setCreatedBy("system");
+			document.getDocumentDetails().setModifiedBy("system");
+			document.getDocumentDetails().setModifiedOn(System.currentTimeMillis());
+		});
+	
+		producer.push("upsert-user-document", userRequest);
+	}
+	
+	public void saveUserBank(InputTest userRequest) {
+		userRequest.getBankDetailsList().forEach(details -> {
+			details.setUserId(userRequest.getRequestInfo().getUserInfo().getId());
+			details.setTenantId(userRequest.getRequestInfo().getUserInfo().getTenantId() != null && userRequest.getRequestInfo().getUserInfo().getTenantId().length() >= 2 ? userRequest.getRequestInfo().getUserInfo().getTenantId().substring(0, 2) : userRequest.getRequestInfo().getUserInfo().getTenantId());
+			details.setCreatedBy("system");
+			details.setIsActive(true);
+			details.setModifiedBy("system");
+			details.setModifiedOn(System.currentTimeMillis());
+		});
+	
+		producer.push("upsert-userbank", userRequest);
+	}
+	
+	public void saveUserQualification(InputTest userRequest) {
+		if (!ObjectUtils.isEmpty(userRequest.getQualificationDetailsList())) {
+			userRequest.getQualificationDetailsList().forEach(details -> {
+				details.setUserId(userRequest.getRequestInfo().getUserInfo().getId());
+				details.setCreatedBy("system");
+				details.setAvailable(true);
+				details.setCreatedOn(System.currentTimeMillis());
+				details.setModifiedBy("system");
+				details.setModifiedOn(System.currentTimeMillis());
+			});
+		}
+	
+		producer.push("upsert-userqualification", userRequest);
+	}
+
+
+
+
+	
+
+	
 
 }

@@ -8,8 +8,6 @@ import org.egov.common.contract.request.User;
 import org.egov.common.contract.user.UserDetailResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import digit.bmc.model.UserSchemeApplication;
 import digit.config.BmcConfiguration;
 import digit.service.UserService;
 import digit.util.IdgenUtil;
@@ -43,7 +41,7 @@ public class SchemeApplicationEnrichment {
     public void enrichSchemeApplication(UserSchemeApplicationRequest schemeApplicationRequest) {
 
         List<String> schemeApplicationIdList = idgenUtil.getIdList(schemeApplicationRequest.getRequestInfo(), schemeApplicationRequest.getRequestInfo().getUserInfo().getTenantId(),configuration.getBmcIdGenName(),configuration.getBmcIdGenFormat(), schemeApplicationRequest.getSchemeApplicationList().size());
-        schemeApplicationRequest.getSchemeApplicationList().get(0).setApplicationNumber(schemeApplicationIdList.get(0));;
+        schemeApplicationRequest.getSchemeApplicationList().get(0).setApplicationNumber(schemeApplicationIdList.get(0));
 
             // Enrich audit details
             AuditDetails auditDetails = AuditDetails.builder().createdBy(schemeApplicationRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(schemeApplicationRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
