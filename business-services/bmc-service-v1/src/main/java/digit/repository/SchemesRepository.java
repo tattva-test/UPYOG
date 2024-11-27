@@ -38,23 +38,27 @@ public class SchemesRepository {
     }
 
     public List<EventDetails> getSchemeWiseCounts(SchemeSearchCriteria searchCriteria) {
-        List<String> actions = searchCriteria.getAction();
-        if (actions == null || actions.isEmpty()) {
-            return new ArrayList<>();
-        }
-        String sql;
-        if(actions.contains("APPLY")){
-         sql =  "select * from schemecounts_for_verify where  uuid = ?"; 
-         return jdbcTemplate.query(sql, countRowmapper, searchCriteria.getUuid());  
-        }else{
-         sql = "select * from schemecounts where action in (%s)";
-          String inClause = actions.stream()
-                .map(a -> "?")
-                .collect(Collectors.joining(","));
+        if (searchCriteria.getUuid() != null) {
+            List<String> actions = searchCriteria.getAction();
+            if (actions == null || actions.isEmpty()) {
+                return new ArrayList<>();
+            }
+            String sql;
+            if (actions.contains("APPLY")) {
+                sql = "select * from schemecounts_for_verify where  uuid = ?";
+                return jdbcTemplate.query(sql, countRowmapper, searchCriteria.getUuid());
+            } else {
+                sql = "select * from schemecounts where action in (%s)";
+                String inClause = actions.stream()
+                        .map(a -> "?")
+                        .collect(Collectors.joining(","));
 
-        sql = String.format(sql, inClause);
-        log.info("Final query: " + sql);
-        return jdbcTemplate.query(sql, countRowmapper, actions.toArray());
+                sql = String.format(sql, inClause);
+                log.info("Final query: " + sql);
+                return jdbcTemplate.query(sql, countRowmapper, actions.toArray());
+            }
+        } else {
+            return new ArrayList<>();
         }
     }
 
