@@ -332,22 +332,24 @@ public class UserService {
 	}
 
 	public Integer removeUserDocument(RemoveRequest userRequest) {
+
+		Integer result = 0;
 		switch (userRequest.getRemovalcriteria().getOption()) {
 			case "document":
-				userRepository.removeUserDocument(userRequest);
+			result= userRepository.removeUserDocument(userRequest);
 				break;
 
 			case "qualification":
-				userRepository.removeUserQualification(userRequest);
+			result= userRepository.removeUserQualification(userRequest);
 				break;
 
 			case "bank":
-				userRepository.removeUserBank(userRequest);
+			result= userRepository.removeUserBank(userRequest);
 				break;
 
 		}
 
-		return userRepository.removeUserDocument(userRequest);
+		return result;
 
 	}
 
