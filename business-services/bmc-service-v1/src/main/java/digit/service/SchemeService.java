@@ -29,8 +29,9 @@ public class SchemeService {
     private static final Logger logger = LoggerFactory.getLogger(SchemeService.class);
 
     public List<EventDetails> getSchemes(RequestInfo requestInfo, SchemeSearchCriteria searchcriteria) {
-        
-        searchcriteria.setUuid(requestInfo.getUserInfo().getUuid());
+        if(requestInfo.getUserInfo() != null){
+            searchcriteria.setUuid(requestInfo.getUserInfo().getUuid());
+        }
         List<EventDetails> schemeWiseApplicatiocounts = schemesRepository.getSchemeWiseCounts(searchcriteria);
         log.info("withCount" + schemeWiseApplicatiocounts.toString());
         List<EventDetails> schemes = schemesRepository.getSchemeDetails(searchcriteria);
