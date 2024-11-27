@@ -89,7 +89,7 @@ public class UserRepository {
                  UPDATE eg_bmc_userbank SET
                 isactive=false, modifiedon=?, modifiedby=? WHERE userid = ?  AND accountnumber = ? 
                                 """;
-     return jdbcTemplate.update(query, modifiedOn, modifiedBy, userId, userRequest.getRemovalcriteria().getId());    
+     return jdbcTemplate.update(query, modifiedOn, modifiedBy, userId, userRequest.getRemovalcriteria().getId().toString());    
     }
 
 }
