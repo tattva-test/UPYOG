@@ -76,7 +76,7 @@ public class UserRepository {
         Long userId = userRequest.getRequestInfo().getUserInfo().getId();
         String query = """
                  UPDATE eg_bmc_userqualification SET
-                available=false, modifiedon=?, modifiedby=? WHERE userid = ?  AND qualificationID = ? 
+                available=false, modifiedon=?, modifiedby=? WHERE "userID" = ?  AND "qualificationID" = ? 
                                 """;
      return jdbcTemplate.update(query, modifiedOn, modifiedBy, userId, userRequest.getRemovalcriteria().getId());    
     }
