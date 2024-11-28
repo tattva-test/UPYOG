@@ -78,20 +78,7 @@ public class SecurityCheckQueryBuilder {
         }
     }
 
-    private String createQuery(List<String> ids) {
-        StringBuilder builder = new StringBuilder();
-        int length = ids.size();
-        for (int i = 0; i < length; i++) {
-            builder.append(" ?");
-            if (i != length - 1)
-                builder.append(",");
-        }
-        return builder.toString();
-    }
-
-    private void addToPreparedStatement(List<Object> preparedStmtList, List<String> ids) {
-        ids.forEach(preparedStmtList::add);
-    }
+   
 
     public String getSearchQueryForInspection(SecurityCheckCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder();
