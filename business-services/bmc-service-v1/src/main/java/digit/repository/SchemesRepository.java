@@ -38,28 +38,32 @@ public class SchemesRepository {
     }
 
     public List<EventDetails> getSchemeWiseCounts(SchemeSearchCriteria searchCriteria) {
-        if (searchCriteria.getUuid() != null) {
-            List<String> actions = searchCriteria.getAction();
-            if (actions == null || actions.isEmpty()) {
-                return new ArrayList<>();
-            }
-            String sql;
-            if (actions.contains("APPLY")) {
-                sql = "select * from schemecounts_for_verify where  uuid = ?";
-                return jdbcTemplate.query(sql, countRowmapper, searchCriteria.getUuid());
-            } else {
-                sql = "select * from schemecounts where action in (%s)";
-                String inClause = actions.stream()
-                        .map(a -> "?")
-                        .collect(Collectors.joining(","));
-
-                sql = String.format(sql, inClause);
-                log.info("Final query: " + sql);
-                return jdbcTemplate.query(sql, countRowmapper, actions.toArray());
-            }
-        } else {
+  
+        if (searchCriteria.getUuid() == null) {
             return new ArrayList<>();
         }
+    
+        List<String> actions = searchCriteria.getAction();
+        if (actions == null || actions.isEmpty()) {
+            return new ArrayList<>();
+        }
+    
+        String sql;
+        Object[] params;
+    
+        if(actions.contains("APPLY")) {
+            sql = "SELECT * FROM schemecounts_for_verify WHERE uuid = ?";
+            params = new Object[]{searchCriteria.getUuid()};
+        } else if (actions.contains("RANDOMIZE")) {
+            sql = "SELECT * FROM schemecounts_for_randomize";
+            params = new Object[]{}; 
+        } else {
+            sql = "SELECT * FROM schemecounts_for_approve";
+            params = new Object[]{}; 
+        }
+        log.info("Final query: " + sql);
+        return jdbcTemplate.query(sql, countRowmapper, params);
     }
+    
 
 }

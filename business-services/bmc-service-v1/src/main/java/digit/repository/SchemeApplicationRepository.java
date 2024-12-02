@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import digit.bmc.model.SchemeCriteria;
 import digit.bmc.model.UserSchemeApplication;
 import digit.bmc.model.VerificationDetails;
+import digit.repository.querybuilder.CountQueryBuilder;
 import digit.repository.querybuilder.EmployeeGetApplicationQueryBuilder;
 import digit.repository.querybuilder.SchemeApplicationQueryBuilder;
 import digit.repository.querybuilder.SchemeBenificiaryBuilder;
@@ -53,6 +54,9 @@ public class SchemeApplicationRepository {
     
     @Autowired
     private SchemeApplicationStatusRowMapper schemeApplicationStatusRowMapper;
+    
+    @Autowired
+    private CountQueryBuilder  countQueryBuilder;
    
 
     // // Constructor-based dependency injection
@@ -168,35 +172,39 @@ public class SchemeApplicationRepository {
         return jdbcTemplate.query(sql, schemeApplicationStatusRowMapper, userid, tenantid);
     }
 
-    public Map<String, Long> getApplicationCountss(String tenantId, List<String> actions) {
-        String sql = """
-            WITH data AS (
-                SELECT 
-                    *, 
-                    RANK() OVER (PARTITION BY businessid ORDER BY createdtime DESC) AS rnk
-                FROM eg_wf_processinstance_v2 
-                WHERE businessservice='bmc-services' AND tenantid=?
-            )
-            SELECT COUNT(*), action 
-            FROM data 
-            WHERE rnk = 1
-            GROUP BY action 
-            HAVING action IN (%s)
-            """;
+    @SuppressWarnings("deprecation")
+    public Map<String, Long> getApplicationCountss(Boolean forVerify, String uuid, List<String> actions) {
+        // String sql = """
+        //     WITH data AS (
+        //         SELECT 
+        //             *, 
+        //             RANK() OVER (PARTITION BY businessid ORDER BY createdtime DESC) AS rnk
+        //         FROM eg_wf_processinstance_v2 
+        //         WHERE businessservice='bmc-services' AND tenantid=?
+        //     )
+        //     SELECT COUNT(*), action 
+        //     FROM data 
+        //     WHERE rnk = 1
+        //     GROUP BY action 
+        //     HAVING action IN (%s)
+        //     """;
 
-        String inClause = String.join(",", actions.stream().map(a -> "?").toList());
-        sql = String.format(sql, inClause);
-        PreparedStatementSetter preparedStatementSetter = ps -> {
-            ps.setString(1, tenantId);
-            for (int i = 0; i < actions.size(); i++) {
-                ps.setString(i + 2, actions.get(i)); 
-            }
-        };
+            
+        // String inClause = String.join(",", actions.stream().map(a -> "?").toList());
+        // sql = String.format(sql, inClause);
+        // PreparedStatementSetter preparedStatementSetter = ps -> {
+        //     ps.setString(1, tenantId);
+        //     for (int i = 0; i < actions.size(); i++) {
+        //         ps.setString(i + 2, actions.get(i)); 
+        //     }
+        // };
+        List<Object> preparedStmtList = new ArrayList<>();
         Map<String, Long> resultMap = new HashMap<>();
-        log.info("Final Query: " + sql);
-        jdbcTemplate.query(sql, preparedStatementSetter, (ResultSet rs) -> {
+        String query = countQueryBuilder.getActionCountQuery(forVerify, uuid, actions, preparedStmtList);
+        log.info("Final Query: " + query);
+        jdbcTemplate.query(query, preparedStmtList.toArray(), (ResultSet rs) -> {
             String action = rs.getString("action");
-            Long count = rs.getLong(1);
+            Long count = forVerify == true ?rs.getLong("wardcnt") :rs.getLong("totalcnt");
             resultMap.put(action, count);
         });
     

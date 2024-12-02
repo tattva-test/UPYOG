@@ -167,7 +167,7 @@ public class SchemeApplicationValidator {
             }
             if(benefitted){
 
-                response.setError(message.append("you have already benifitted for ")
+                response.setError(message.append("You have already benifitted for ")
                 .append(response.getSchemeName()).append("  ")
                 .append(response.getBenifittedDate().toString()));
                 return response;
